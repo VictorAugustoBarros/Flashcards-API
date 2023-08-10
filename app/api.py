@@ -9,10 +9,9 @@ from app.routers.decks.decks_router import graphql_decks_schema
 
 app = FastAPI()
 
-# type: ignore
-# @TODO -> Alterar a Lib MongoDB para Motor Async (Poll de conexão)
+
 # @TODO -> Criar testes unitários
-# @TODO -> Usar Injeção de dependencia -> Trocar o MongoDB pelo DynamoDB de forma simples
+# @TODO -> Alterar a Lib MongoDB para Motor Async (Poll de conexão)
 
 
 class CreateApp:

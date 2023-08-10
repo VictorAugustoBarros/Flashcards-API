@@ -16,7 +16,7 @@ class CardQuery:
     cards: typing.List[Card] = strawberry.field(resolver=CardController().get_all_cards)
 
     @strawberry.field()
-    def get_question(self, question: str) -> Optional[Union[Card, None, str]]:
+    def get_question(self, question: str) -> Optional[Union[Card, None]]:
         """Busca de um Card pela variavel *question*
 
         Args:
@@ -24,5 +24,4 @@ class CardQuery:
 
         Returns:
         """
-        # @TODO -> Alterar essa função para filtar a busca dentro do Deck por usuário
-        return question
+        return CardController().get_question(question=question)

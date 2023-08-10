@@ -5,42 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c87c5347-49e6-4d74-8d33-ce449480a613" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.coverage" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/Flashcards.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Makefile" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/api.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/connections/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/connections/mongo/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/connections/mongo/mongo_db.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/controllers/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/controllers/card_controller.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/cards.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/models/deck.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/cards/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/cards/cards_router.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/cards/mutations/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/cards/mutations/card_mutations.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/cards/query/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/cards/query/card_query.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/decks/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/decks/decks_router.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/decks/query/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/routers/decks/query/deck_query.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mongodb.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/poetry.lock" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sentry.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/test_cards.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/api.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,15 +35,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "/home/victor/PycharmProjects/Flashcards/app/routers/decks/query",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/victor/PycharmProjects/Flashcards/app/routers/decks/query&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/app/routers/decks/query" />
@@ -93,13 +59,14 @@
       <recent name="$PROJECT_DIR$/app" />
     </key>
   </component>
-  <component name="RunManager" selected="Python tests.Python tests for test_cards.TestCards">
+  <component name="RunManager" selected="Python.api">
     <configuration name="api" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Flashcards" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="ENVIRONMENT" value="LOCAL" />
       </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
@@ -107,27 +74,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/app/api.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="sentry" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Flashcards" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/sentry.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -150,11 +96,14 @@
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Python.api" />
+      <item itemvalue="Python tests.Python tests for test_cards.TestCards" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.Python tests for test_cards.TestCards" />
         <item itemvalue="Python.api" />
-        <item itemvalue="Python.sentry" />
+        <item itemvalue="Python tests.Python tests for test_cards.TestCards" />
       </list>
     </recent_temporary>
   </component>
@@ -168,21 +117,5 @@
       <updated>1691540837872</updated>
     </task>
     <servers />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/app/controllers/card_controller.py</url>
-          <line>32</line>
-          <option name="timeStamp" value="23" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
-    <watches-manager>
-      <configuration name="PythonConfigurationType">
-        <watch expression="self.card_controller" language="Python" />
-      </configuration>
-    </watches-manager>
   </component>
 </project>

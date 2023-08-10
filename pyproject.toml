@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "flashcards"
+version = "0.1.0"
+description = ""
+authors = ["Victor Augusto"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.101.0"
+uvicorn = "^0.23.2"
+sentry-sdk = "^1.29.2"
+strawberry-graphql = "^0.202.1"
+pymongo = "^4.4.1"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
+flake8 = "^6.1.0"
+pylint = "^2.17.5"
+isort = "^5.12.0"
+mypy = "^1.4.1"
+coverage = "^7.2.7"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

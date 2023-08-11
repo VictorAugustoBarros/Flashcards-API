@@ -2,7 +2,7 @@
 
 import os
 
-environment = os.getenv("ENVIRONMENT")
+environment = os.getenv("ENVIRONMENT", "LOCAL")
 
 if environment == "LOCAL":
     from dotenv import load_dotenv

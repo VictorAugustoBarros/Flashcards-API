@@ -2,7 +2,8 @@
 from typing import Optional, Union
 
 from app.dependencies import get_database
-from app.models.cards import Card
+from app.errors import CreateCardError
+from app.models.cards.schema.cards_schema import Card
 
 
 class CardController:
@@ -22,12 +23,16 @@ class CardController:
         Returns:
             inserted_id (int): ID do registro gerado pelo MongoDB
         """
-        inserted_id = self.database.insert_document(
-            collection_name=self.collection, document=card.__dict__
-        )
-        return inserted_id
+        try:
+            inserted_id = self.database.insert_document(
+                collection_name=self.collection, document=card.__dict__
+            )
+            return inserted_id
 
-    def get_question(self, question: str) -> Optional[Union[Card, None]]:
+        except Exception as error:
+            raise CreateCardError()
+
+    def get_question(self, question: str) -> Optional[Union[dict, None]]:
         """Busca de um Card pela variavel *question*
 
         Args:
@@ -42,12 +47,10 @@ class CardController:
         if not document:
             return None
 
-        return Card(
-            question=document.get("question"),
-            answer=document.get("answer"),
-            insert_date=document.get("insert_date"),
-            additional_info=document.get("additional_info"),
-        )
+        return {
+            "question": document.get("question"),
+            "answer": document.get("answer")
+        }
 
     def get_all_cards(self):
         """Busca de todos os Cards cadastrados.
@@ -59,12 +62,13 @@ class CardController:
         cards = []
         for document in documents:
             cards.append(
-                Card(
-                    question=document.get("question"),
-                    answer=document.get("answer"),
-                    insert_date=document.get("insert_date"),
-                    additional_info=document.get("additional_info"),
-                )
+                {
+                    "question": document.get("question"),
+                    "answer": document.get("answer")
+                }
             )
+
+        if not cards:
+            return None
 
         return cards

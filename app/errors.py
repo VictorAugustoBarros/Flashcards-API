@@ -1,0 +1,3 @@
+
+class CreateCardError(Exception):
+    ...

@@ -1,0 +1,11 @@
+[run]
+omit =
+    app/api.py
+    app/connections/mongo/mongo_db.py
+    app/credencials.py
+    app/dependencies.py
+    app/models/cards.py
+    app/models/decks.py
+    app/routers/cards/cards_router.py
+    app/routers/decks/decks_router.py
+    app/routers/status.py

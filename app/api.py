@@ -1,59 +1,38 @@
 """Construção da Api FastAPI."""
 
-import fastapi
 from fastapi import FastAPI
-from strawberry.asgi import GraphQL
+from app.models.cards.cards_importer import graphql_cards_schema
+from app.routers.status import status_router
+from app.sentry import Sentry
 
-from app.routers.cards.cards_router import graphql_cards_schema
-from app.routers.decks.decks_router import graphql_decks_schema
-
-app = FastAPI()
-
-
-# @TODO -> Criar testes unitários
-# @TODO -> Alterar a Lib MongoDB para Motor Async (Poll de conexão)
+from starlette_graphene3 import GraphQLApp, make_graphiql_handler
 
 
 class CreateApp:
     """Classe para criação da API FastAPI."""
 
-    def __init__(self, api_app: FastAPI):
-        """Construtor da classe.
+    def __init__(self):
+        """Construtor da classe."""
+        self.app = FastAPI()
 
-        Args:
-            api_app (FastAPI): Instancia da API FastAPI
-        """
-        self.api_app = api_app
-
-    @staticmethod
-    @app.get("/status")
-    def status():
-        """Rota para verificação do status da API.
-
-        Returns: Status da aplicação e versionamento das libs utilizadas na API
-        """
-        return {
-            "status": "active",
-            "libs": {
-                "FastAPI": fastapi.__version__,
-                "Uvicorn": uvicorn.__version__,
-            },
-        }
+    def load_routes(self):
+        """Carregamento das rotas."""
+        self.app.include_router(status_router)
 
     def load_graphql(self):
         """Instancia do GraphQL e seus Schemas."""
-        graphql_app = GraphQL(graphql_cards_schema, graphql_decks_schema)
-
-        self.api_app.add_route("/graphql", graphql_app)
-        self.api_app.add_websocket_route("/graphql", graphql_app)
+        self.app.mount("/", GraphQLApp(graphql_cards_schema, on_get=make_graphiql_handler()))  # Graphiql IDE
 
     def start(self):
         """Carregamento das configurações da API."""
+        self.load_routes()
         self.load_graphql()
-        return self.api_app
+        return self.app
 
 
-app = CreateApp(api_app=app).start()
+create_app = CreateApp()
+app = create_app.start()
+Sentry().start()
 
 if __name__ == "__main__":  # type: ignore
     import uvicorn

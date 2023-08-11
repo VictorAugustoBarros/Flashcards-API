@@ -29,6 +29,10 @@ class MongoDB:
         )
         return client[mongo_database]
 
+    def close(self):
+        """Fechamento da conexão"""
+        self.mongod_db.close()
+
     def insert_document(self, collection_name: str, document: dict) -> str:
         """Inserção de um novo registro no MongoDB.
 

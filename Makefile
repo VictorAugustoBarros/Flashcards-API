@@ -11,7 +11,7 @@ mypy:
 	mypy app/
 
 coverage:
-	coverage run --source=app -m unittest discover -s tests && coverage report --fail-under=70
+	coverage run --source=app -m unittest discover -s tests && coverage report --fail-under=70 --show-missing
 
 
 make validate:

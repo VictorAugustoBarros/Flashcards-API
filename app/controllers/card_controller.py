@@ -1,9 +1,10 @@
 """Card Controller."""
+from datetime import datetime
 from typing import Optional, Union
 
 from app.dependencies import get_database
 from app.errors import CreateCardError
-from app.models.cards.schema.cards_schema import Card
+from app.models.cards.cards import Card
 
 
 class CardController:
@@ -24,6 +25,7 @@ class CardController:
             inserted_id (int): ID do registro gerado pelo MongoDB
         """
         try:
+            card.creation_date = datetime.now()
             inserted_id = self.database.insert_document(
                 collection_name=self.collection, document=card.__dict__
             )
@@ -47,10 +49,7 @@ class CardController:
         if not document:
             return None
 
-        return {
-            "question": document.get("question"),
-            "answer": document.get("answer")
-        }
+        return {"question": document.get("question"), "answer": document.get("answer")}
 
     def get_all_cards(self):
         """Busca de todos os Cards cadastrados.
@@ -58,14 +57,11 @@ class CardController:
         Returns:
             cards (list): Lista com todos os Cards
         """
-        documents = self.database.find_documents(collection_name="Cards")
+        documents = self.database.find_documents(collection_name=self.collection)
         cards = []
         for document in documents:
             cards.append(
-                {
-                    "question": document.get("question"),
-                    "answer": document.get("answer")
-                }
+                {"question": document.get("question"), "answer": document.get("answer")}
             )
 
         if not cards:

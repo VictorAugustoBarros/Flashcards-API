@@ -1,0 +1,19 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:8.1.0
+    restart: always
+    container_name: mysql_flashcards
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: Flashcards
+      MYSQL_USER: victor
+      MYSQL_PASSWORD: admin
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - mysql-data:/var/lib/mysql
+    command: ["--init-file", "/docker-entrypoint-initdb.d/init.sql"]
+
+volumes:
+  mysql-data:

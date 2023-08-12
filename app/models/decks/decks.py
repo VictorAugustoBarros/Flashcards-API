@@ -1,23 +1,24 @@
-"""Deck."""
+import datetime
 from typing import List
+from dataclasses import dataclass
 
-import strawberry
-
-from app.models.cards import Card
+from app.models.cards.cards import Card
 
 
-@strawberry.type
+@dataclass
 class SubDeck:
+    """Classe modelo do SubDeck."""
+
     name: str
     description: str
     cards = List[Card]
 
 
-# pylint: disable=R0903
-@strawberry.type
-class Deck:  # type: ignore
+@dataclass
+class Deck:
     """Classe modelo do Deck."""
 
     name: str
     description: str
     sub_deck: List[SubDeck]
+    creation_date: datetime = None

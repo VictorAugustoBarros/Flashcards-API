@@ -3,8 +3,13 @@ from typing import Optional
 
 from pymongo import MongoClient
 
-from app.credencials import (mongo_database, mongo_host, mongo_password,
-                             mongo_port, mongo_user)
+from app.credencials import (
+    mongo_database,
+    mongo_host,
+    mongo_password,
+    mongo_port,
+    mongo_user,
+)
 
 
 class MongoDB:

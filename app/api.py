@@ -1,11 +1,15 @@
 """Construção da Api FastAPI."""
+import os
 
 from fastapi import FastAPI
-from app.models.cards.cards_importer import graphql_cards_schema
-from app.routers.status import status_router
+from ariadne.asgi import GraphQL
+
 from app.sentry import Sentry
 
-from starlette_graphene3 import GraphQLApp, make_graphiql_handler
+from app.routers.status import status_router
+from app.models.schema_importer import graphql_schema
+
+from app.graphql_error import graphql_format_error
 
 
 class CreateApp:
@@ -21,7 +25,14 @@ class CreateApp:
 
     def load_graphql(self):
         """Instancia do GraphQL e seus Schemas."""
-        self.app.mount("/", GraphQLApp(graphql_cards_schema, on_get=make_graphiql_handler()))  # Graphiql IDE
+        self.app.mount(
+            "/graphql",
+            GraphQL(
+                graphql_schema,
+                error_formatter=graphql_format_error,
+                debug=os.getenv("DEBUG", "False") == "True",
+            ),
+        )
 
     def start(self):
         """Carregamento das configurações da API."""

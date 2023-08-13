@@ -9,9 +9,8 @@ from app.models.schema_importer import graphql_schema
 from app.routers.status import status_router
 from app.services.sentry import Sentry
 
-# TODO -> Implementar o MySQL no projeto para relações de vinculos entre cards/subdecks/decks
-# TODO -> Implementar um Limite de profundidade através de um middleware
-# TODO -> Usar fragmentos no GraphQL
+
+
 
 
 class CreateApp:

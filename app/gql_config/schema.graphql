@@ -38,14 +38,17 @@ type Deck {
 
 # Query
 type Query {
-    get_card (id: Int): Card
-    get_cards: [Card]
     get_deck (deck_id: Int): Deck
     get_decks: [Deck]
-    get_user(id: Int): User
-    get_users: [User]
-    get_subdeck(id: Int): SubDeck
+
+    get_subdeck(subdeck_id: Int): SubDeck
     get_subdecks: [SubDeck]
+
+    get_card (card_id: Int): Card
+    get_cards: [Card]
+
+    get_user(user_id: Int): User
+    get_users: [User]
     validate_username(username: String!): Response!
 }
 
@@ -55,5 +58,6 @@ type Mutation {
     add_deck(name: String!, description: String!) : Response!
     add_user(email: String!, username: String!, password: String!): Response!
     add_subdeck(deck_id: Int!, name: String!, description: String!): Response!
+
     link_card_deck(deck_id: Int, card_id: Int): Response!
 }

@@ -1,6 +1,6 @@
 """Card Controller."""
 from datetime import datetime
-from typing import List
+from typing import List, Optional, Union
 
 from sqlalchemy import or_
 
@@ -16,15 +16,19 @@ class UserController:
         """Construtor da classe."""
         self.database = Dependencies.database
 
-    def validate_username(self, username: str):
+    def validate_username_exists(self, username: str):
         try:
             session = self.database.session()
 
-            username_exists = (
-                session.query(MySQLUser).filter(MySQLUser.email == username).first()
+            existing_username = (
+                session.query(MySQLUser)
+                .filter(
+                    MySQLUser.username == username,
+                )
+                .first()
             )
 
-            return True if username_exists else False
+            return True if existing_username else False
 
         except Exception as error:
             raise error
@@ -79,6 +83,21 @@ class UserController:
 
         except Exception as error:
             raise error
+
+    def get_user(self, user_id: int) -> Optional[Union[None, User]]:
+        session = self.database.session()
+
+        row = (session.query(MySQLUser).filter(MySQLUser.id == user_id).first())
+        if not row:
+            return None
+
+        return User(
+            id=row.id,
+            email=row.email,
+            username=row.username,
+            password=row.password,
+            creation_date=row.creation_date,
+        )
 
     def get_all_users(self) -> List[User]:
         """Busca de todos os Users cadastrados.

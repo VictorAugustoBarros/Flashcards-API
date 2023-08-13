@@ -61,3 +61,22 @@ class CardController:
             )
 
         return cards
+
+    def get_card(self, card_id: int):
+        session = self.database.session()
+
+        row = (
+            session.query(MySQLCard)
+            .filter(MySQLCard.id == card_id)
+            .first()
+        )
+
+        if not row:
+            return None
+
+        return Card(
+            id=row.id,
+            question=row.question,
+            answer=row.answer,
+            creation_date=row.creation_date,
+        )

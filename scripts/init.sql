@@ -1,0 +1,66 @@
+-- Criação do database caso não exista
+CREATE DATABASE IF NOT EXISTS Flashcards;
+
+---- Escolher o banco de dados
+--USE Flashcards;
+--
+---- Criar tabela de usuarios (users)
+--CREATE TABLE IF NOT EXISTS users (
+--    id INT AUTO_INCREMENT PRIMARY KEY,
+--    email VARCHAR(255) NOT NULL,
+--    username VARCHAR(255) NOT NULL,
+--    password VARCHAR(255) NOT NULL,
+--    creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+--    INDEX idx_creation_date (creation_date)
+--);
+--
+---- Criar tabela de decks
+--CREATE TABLE IF NOT EXISTS decks (
+--    id INT AUTO_INCREMENT PRIMARY KEY,
+--    name VARCHAR(255) NOT NULL,
+--    description TEXT,
+--    creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+--    INDEX idx_creation_date (creation_date)
+--);
+--
+---- Criar tabela de subdecks
+--CREATE TABLE IF NOT EXISTS subdecks (
+--    id INT AUTO_INCREMENT PRIMARY KEY,
+--    name VARCHAR(255) NOT NULL,
+--    description TEXT,
+--    deck_id INT NOT NULL,
+--    creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+--    FOREIGN KEY (deck_id) REFERENCES decks(id),
+--    INDEX idx_creation_date (creation_date)
+--);
+--
+---- Criar tabela de cartões (cards)
+--CREATE TABLE IF NOT EXISTS cards (
+--    id INT AUTO_INCREMENT PRIMARY KEY,
+--    question VARCHAR(255) NOT NULL,
+--    answer VARCHAR(255) NOT NULL,
+--    subdeck_id INT NOT NULL,
+--    creation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+--    FOREIGN KEY (subdeck_id) REFERENCES subdecks(id),
+--    INDEX idx_creation_date (creation_date)
+--);
+--
+---- Criar tabela de decks_users
+--CREATE TABLE IF NOT EXISTS decks_users (
+--    id INT AUTO_INCREMENT PRIMARY KEY,
+--    deck_id INT NOT NULL,
+--    user_id INT NOT NULL,
+--    FOREIGN KEY (deck_id) REFERENCES decks(id),
+--    FOREIGN KEY (user_id) REFERENCES users(id),
+--    creation_date DATETIME DEFAULT CURRENT_TIMESTAMP
+--);
+--
+---- Criar tabela de subdecks_users
+--CREATE TABLE IF NOT EXISTS subdecks_users (
+--    id INT AUTO_INCREMENT PRIMARY KEY,
+--    subdeck_id INT NOT NULL,
+--    user_id INT NOT NULL,
+--    FOREIGN KEY (subdeck_id) REFERENCES subdecks(id),
+--    FOREIGN KEY (user_id) REFERENCES users(id),
+--    creation_date DATETIME DEFAULT CURRENT_TIMESTAMP
+--);

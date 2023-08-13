@@ -1,15 +1,17 @@
 """Construção da Api FastAPI."""
 import os
 
-from fastapi import FastAPI
 from ariadne.asgi import GraphQL
+from fastapi import FastAPI
 
-from app.sentry import Sentry
-
-from app.routers.status import status_router
+from app.gql_config.graphql_error import graphql_format_error
 from app.models.schema_importer import graphql_schema
+from app.routers.status import status_router
+from app.services.sentry import Sentry
 
-from app.graphql_error import graphql_format_error
+# TODO -> Implementar o MySQL no projeto para relações de vinculos entre cards/subdecks/decks
+# TODO -> Implementar um Limite de profundidade através de um middleware
+# TODO -> Usar fragmentos no GraphQL
 
 
 class CreateApp:

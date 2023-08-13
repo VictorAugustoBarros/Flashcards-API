@@ -1,10 +1,9 @@
 """Card Controller."""
 from datetime import datetime
-from typing import Optional, Union
 
-from app.dependencies import get_database
-from app.errors import CreateCardError
-from app.models.cards.cards import Card
+from app.connections.mysql.models.mysql_card import MySQLCard
+from app.dependencies import Dependencies
+from app.models.cards.card import Card
 
 
 class CardController:
@@ -12,44 +11,33 @@ class CardController:
 
     def __init__(self):
         """Construtor da classe."""
-        self.database = get_database()
+        self.database = Dependencies.database
         self.collection = "Cards"
 
-    def insert_card(self, card: Card):
+    def insert_card(self, card: Card, subdeck_id: int):
         """Inserção de um novo Card.
 
         Args:
             card (Card): Card a ser inserido
+            subdeck_id (Int): Card a ser inserido
 
         Returns:
             inserted_id (int): ID do registro gerado pelo MongoDB
         """
         try:
-            card.creation_date = datetime.now()
-            inserted_id = self.database.insert_document(
-                collection_name=self.collection, document=card.__dict__
-            )
-            return inserted_id
+            session = self.database.session()
+
+            mysql_card = MySQLCard(**card.__dict__)
+            mysql_card.subdeck_id = subdeck_id
+            mysql_card.creation_date = datetime.now()
+
+            session.add(mysql_card)
+            session.commit()
+
+            return True
 
         except Exception as error:
-            raise CreateCardError()
-
-    def get_question(self, question: str) -> Optional[Union[dict, None]]:
-        """Busca de um Card pela variavel *question*
-
-        Args:
-            question (str): Question a ser pesquisada
-
-        Returns:
-            cards (List[Cards]): lista com os cards encontrados
-        """
-        document = self.database.find_one_document(
-            collection_name=self.collection, mongo_query={"question": question}
-        )
-        if not document:
-            return None
-
-        return {"question": document.get("question"), "answer": document.get("answer")}
+            raise error
 
     def get_all_cards(self):
         """Busca de todos os Cards cadastrados.
@@ -57,14 +45,19 @@ class CardController:
         Returns:
             cards (list): Lista com todos os Cards
         """
-        documents = self.database.find_documents(collection_name=self.collection)
-        cards = []
-        for document in documents:
-            cards.append(
-                {"question": document.get("question"), "answer": document.get("answer")}
-            )
+        session = self.database.session()
 
-        if not cards:
-            return None
+        rows = session.query(MySQLCard).all()
+
+        cards = []
+        for row in rows:
+            cards.append(
+                Card(
+                    id=row.id,
+                    question=row.question,
+                    answer=row.answer,
+                    creation_date=row.creation_date,
+                )
+            )
 
         return cards

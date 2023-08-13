@@ -13,7 +13,9 @@ services:
       MYSQL_ROOT_PASSWORD: root
     volumes:
       - mysql-data:/var/lib/mysql
-    command: ["--init-file", "/docker-entrypoint-initdb.d/init.sql"]
+      - /etc/localtime:/etc/localtime:ro
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    command: [ "--init-file", "/docker-entrypoint-initdb.d/init.sql" ]
 
 volumes:
   mysql-data:

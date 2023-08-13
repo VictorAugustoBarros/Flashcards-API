@@ -1,0 +1,59 @@
+type Response {
+    success: Boolean!
+    message: String
+    error: String
+}
+
+type Card {
+    id: Int
+    question: String!
+    answer: String!
+    creation_date: String
+    subdeck_id: Int!
+}
+
+type User {
+    id: Int
+    email: String!
+    username: String!
+    password: String!
+    creation_date: String
+}
+
+type SubDeck {
+    id: Int
+    name: String!
+    description: String!
+    cards: [Card]
+    creation_date: String
+}
+
+type Deck {
+    id: Int
+    name: String!
+    description: String
+    sub_deck: [SubDeck]
+    creation_date: String
+}
+
+# Query
+type Query {
+    get_card (id: Int): Card
+    get_cards: [Card]
+    get_deck (deck_id: Int): Deck
+    get_decks: [Deck]
+    get_user(id: Int): User
+    get_users: [User]
+    get_subdeck(id: Int): SubDeck
+    get_subdecks: [SubDeck]
+    validate_username(username: String!): Response!
+}
+
+# Mutation
+type Mutation {
+    add_card(subdeck_id: Int!, question: String!, answer: String!): Response!
+    add_deck(name: String!, description: String!) : Response!
+    add_user(email: String!, username: String!, password: String!): Response!
+    add_subdeck(deck_id: Int!, name: String!, description: String!): Response!
+    link_card_deck(deck_id: Int, card_id: Int): Response!
+}

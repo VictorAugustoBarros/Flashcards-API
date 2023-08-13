@@ -1,13 +1,11 @@
 """Dependency Injection."""
-from typing import Union
+from dataclasses import dataclass
+
 from app.connections.mongo.mongo_db import MongoDB
+from app.connections.mysql.mysql_db import MySQLDB
 
 
-def get_database() -> Union[MongoDB, ]:
-    """Retorno do database a ser utlizado
-
-    Returns:
-        mongo_db (MongoDB): Conexão com o database
-    """
-    mongo_db = MongoDB()
-    return mongo_db
+@dataclass
+class Dependencies:
+    # database: MongoDB = MongoDB()
+    database: MySQLDB = MySQLDB()

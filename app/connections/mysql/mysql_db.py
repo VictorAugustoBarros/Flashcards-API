@@ -1,35 +1,34 @@
-import pymysql
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from app.connections.mysql.models.mysql_base import Base
+from app.credencials import (
+    mysql_database,
+    mysql_host,
+    mysql_password,
+    mysql_port,
+    mysql_user,
+)
 
 
 class MySQLDB:
-    def __init__(self, host, user, password, database):
-        self.host = host
-        self.user = user
-        self.password = password
-        self.database = database
-        self.connection = None
-
-    def connect(self):
-        self.connection = pymysql.connect(
-            host=self.host,
-            user=self.user,
-            password=self.password,
-            database=self.database
+    def __init__(self):
+        engine = create_engine(
+            f"mysql+pymysql://{mysql_user}:{mysql_password}@{mysql_host}:{mysql_port}/{mysql_database}"
         )
 
-    def disconnect(self):
-        if self.connection:
-            self.connection.close()
+        # Base.metadata.drop_all(engine)
+        Base.metadata.create_all(engine)
+        self.session = sessionmaker(bind=engine)
 
     def execute_query(self, query, params=None):
         try:
-            with self.connection.cursor() as cursor:
-                cursor.execute(query, params)
-                self.connection.commit()
-                return cursor.fetchall()
+            session = self.session()
+            result = session.execute(query, params)
+            session.commit()
+            return result.fetchall()
         except Exception as e:
             print("Error:", e)
-            self.connection.rollback()
             return []
 
     def fetch_one(self, query, params=None):

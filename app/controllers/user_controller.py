@@ -46,14 +46,17 @@ class UserController:
         except Exception as error:
             raise error
 
-    def validate_user(self, user: User):
+    def validate_user_email_username_exists(self, email: str, username: str) -> bool:
         """Validação se já existe um usuário com mesmo Email ou Username
 
         Args:
-            user (User): User a ser inserido
+            email (str): Email do usuário
+            username (str): Username do usuário
 
         Returns:
-
+            existing_user(bool):
+                True -> Email e Username já existem
+                Fasle -> Email e Username disponíveis
         """
         try:
             session = self.database.session()
@@ -62,8 +65,8 @@ class UserController:
                 session.query(MySQLUser)
                 .filter(
                     or_(
-                        MySQLUser.email == user.email,
-                        MySQLUser.username == user.username,
+                        MySQLUser.email == email,
+                        MySQLUser.username == username,
                     )
                 )
                 .first()
@@ -74,14 +77,14 @@ class UserController:
         except Exception as error:
             raise error
 
-    def insert_user(self, user: User):
+    def insert_user(self, user: User) -> User:
         """Inserção de um novo Card.
 
         Args:
             user (User): User a ser inserido
 
         Returns:
-            inserted_id (int): ID do registro gerado pelo Database
+            user (User): User com os dados atualizados
         """
         try:
             session = self.database.session()
@@ -92,7 +95,10 @@ class UserController:
             session.add(mysql_user)
             session.commit()
 
-            return True
+            user.id = mysql_user.id
+            user.creation_date = mysql_user.creation_date
+
+            return user
 
         except Exception as error:
             raise error

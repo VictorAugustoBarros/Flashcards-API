@@ -1,3 +1,4 @@
+"""MySQL User Deck model."""
 from sqlalchemy import Column, DateTime, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 
@@ -5,6 +6,8 @@ from app.connections.mysql.mysql_base import Base
 
 
 class MySQLUserDeck(Base):
+    """Classe modelo do SQLAlchemy da tabela users_deck"""
+
     __tablename__ = "users_deck"
 
     id = Column(Integer, primary_key=True)

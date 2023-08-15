@@ -40,8 +40,10 @@ class DeckController:
 
             session.add(mysql_deck)
             session.commit()
+            deck.id = mysql_deck.id
+            deck.creation_date = mysql_deck.creation_date
 
-            return True
+            return deck
 
         except Exception as error:
             raise error

@@ -1,11 +1,12 @@
 from datetime import datetime
+from typing import List
 
 from sqlalchemy import and_
 
 from app.connections.mysql.models.mysql_user_subdeck import MySQLUserSubDeck
 from app.controllers.subdeck_controller import SubDeckController
+from app.models.decks.deck import Deck
 from app.utils.dependencies import Dependencies
-
 
 
 class UserSubDeckController:
@@ -32,18 +33,31 @@ class UserSubDeckController:
             raise error
 
     def validate_link_userdeck_exists(self, user_id: int, subdeck_id: int) -> bool:
+
         session = self.database.session()
 
-        existing_usersubdeck = session.query(MySQLUserSubDeck).filter(
-            and_(
-                MySQLUserSubDeck.user_id == user_id,
-                MySQLUserSubDeck.subdeck_id == subdeck_id
+        existing_usersubdeck = (
+            session.query(MySQLUserSubDeck)
+            .filter(
+                and_(
+                    MySQLUserSubDeck.user_id == user_id,
+                    MySQLUserSubDeck.subdeck_id == subdeck_id,
+                )
             )
-        ).first()
+            .first()
+        )
 
         return True if existing_usersubdeck else False
 
-    def get_user_subdeck(self, user_id: int):
+    def get_user_subdeck(self, user_id: int) -> List[Deck]:
+        """Busca dos Subdecks do usuário
+
+        Args:
+            user_id(int): ID do usuário
+
+        Returns:
+
+        """
         try:
             session = self.database.session()
 
@@ -55,7 +69,11 @@ class UserSubDeckController:
 
             decks = []
             for user_subdeck in user_subdecks:
-                decks.append(self.subdeck_controller.get_subdeck(subdeck_id=user_subdeck.subdeck.id))
+                decks.append(
+                    self.subdeck_controller.get_subdeck(
+                        subdeck_id=user_subdeck.subdeck.id
+                    )
+                )
 
             return decks
 

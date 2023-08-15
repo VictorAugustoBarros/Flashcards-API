@@ -14,7 +14,7 @@ class CardController:
         """Construtor da classe."""
         self.database = Dependencies.database
 
-    def insert_card(self, card: Card, subdeck_id: int):
+    def insert_card(self, card: Card, subdeck_id: int) -> Card:
         """Inserção de um novo Card.
 
         Args:
@@ -34,7 +34,10 @@ class CardController:
             session.add(mysql_card)
             session.commit()
 
-            return True
+            card.id = mysql_card.id
+            card.creation_date = mysql_card.creation_date
+
+            return card
 
         except Exception as error:
             raise error

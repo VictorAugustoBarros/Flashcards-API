@@ -4,12 +4,35 @@ type Response {
     error: String
 }
 
+type UserResponse {
+    user: User
+    response: Response
+}
+
+type DeckResponse {
+    deck: Deck
+    response: Response
+}
+
+type SubDeckResponse {
+    subdeck: SubDeck
+    response: Response
+}
+
+type CardResponse {
+    card: Card
+    response: Response
+}
+
+
+
+
 type Card {
     id: Int
     question: String!
     answer: String!
     creation_date: String
-    subdeck_id: Int!
+    subdeck_id: Int
 }
 
 type User {
@@ -61,10 +84,10 @@ type Query {
 
 # Mutation
 type Mutation {
-    add_card(subdeck_id: Int!, question: String!, answer: String!): Response!
-    add_deck(name: String!, description: String!) : Response!
-    add_user(email: String!, username: String!, password: String!): Response!
-    add_subdeck(deck_id: Int!, name: String!, description: String!): Response!
+    add_card(subdeck_id: Int!, question: String!, answer: String!): CardResponse!
+    add_deck(name: String!, description: String!) : DeckResponse!
+    add_user(email: String!, username: String!, password: String!): UserResponse!
+    add_subdeck(deck_id: Int!, name: String!, description: String!): SubDeckResponse!
 
     link_user_deck(user_id: Int!, deck_id: Int!): Response!
     link_user_subdeck(user_id: Int!, subdeck_id: Int!): Response!

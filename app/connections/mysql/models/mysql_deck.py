@@ -1,3 +1,4 @@
+"""MySQL Deck model."""
 from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.orm import relationship
 
@@ -5,6 +6,8 @@ from app.connections.mysql.mysql_base import Base
 
 
 class MySQLDeck(Base):
+    """Classe modelo do SQLAlchemy da tabela decks"""
+
     __tablename__ = "decks"
 
     id = Column(Integer, primary_key=True)

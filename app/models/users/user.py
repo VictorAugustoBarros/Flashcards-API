@@ -1,3 +1,4 @@
+"""User Model."""
 import datetime
 from dataclasses import dataclass
 
@@ -10,4 +11,4 @@ class User:
     email: str
     password: str
     creation_date: datetime = None
-    id: int = None
+    id: int = None  # pylint: disable=C0103

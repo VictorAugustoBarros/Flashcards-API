@@ -16,15 +16,15 @@ class SubDeckController:
         """Construtor da classe."""
         self.database = Dependencies.database
 
-    def insert_subdeck(self, subdeck: SubDeck, deck_id: int):
+    def insert_subdeck(self, subdeck: SubDeck, deck_id: int) -> SubDeck:
         """Inserção de um novo SubDeck.
 
         Args:
-            subdeck (SubDeck): Deck a ser inserido
-            deck_id (int): ID do deck a ser inserido
+            subdeck (SubDeck): SubDeck a ser cadastrado
+            deck_id (int): ID do Deck a ser cadastrado
 
         Returns:
-            inserted_id (int): ID do registro gerado pelo database
+            subdeck (SubDeck): SubDeck com os dados atualizados
         """
         try:
             session = self.database.session()
@@ -36,8 +36,10 @@ class SubDeckController:
 
             session.add(mysql_subdeck)
             session.commit()
+            subdeck.id = mysql_subdeck.id
+            subdeck.creation_date = mysql_subdeck.creation_date
 
-            return True
+            return subdeck
 
         except Exception as error:
             raise error
@@ -83,9 +85,7 @@ class SubDeckController:
 
         subdecks = (
             session.query(MySQLSubDeck)
-            .options(
-                joinedload(MySQLSubDeck.cards, innerjoin=False)
-            )
+            .options(joinedload(MySQLSubDeck.cards, innerjoin=False))
             .all()
         )
 

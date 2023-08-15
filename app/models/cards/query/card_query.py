@@ -1,5 +1,5 @@
 """Card Query GraphQL."""
-from typing import Optional
+from typing import Optional, List
 from ariadne import QueryType
 
 from app.controllers.card_controller import CardController
@@ -10,8 +10,8 @@ card_controller = CardController()
 
 
 @card_query.field("get_card")
-def resolve_get_cards(*_, card_id: int) -> Optional[Card]:
-    """Função resolve para busca do Card por ID
+def resolve_get_card(*_, card_id: int) -> Optional[Card]:
+    """Busca do Card por ID
 
     Args:
         *_:
@@ -25,7 +25,15 @@ def resolve_get_cards(*_, card_id: int) -> Optional[Card]:
 
 
 @card_query.field("get_cards")
-def resolve_get_cards(*_):
+def resolve_get_cards(*_) -> List[Card]:
+    """Busca dos cards cadastrados
+
+    Args:
+        *_:
+
+    Returns:
+        cards(List[Card]): Lista de Cards
+    """
     cards = card_controller.get_all_cards()
 
     return cards

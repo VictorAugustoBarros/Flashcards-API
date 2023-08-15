@@ -1,3 +1,4 @@
+"""Deck Model."""
 import datetime
 from dataclasses import dataclass, field
 from typing import List
@@ -13,4 +14,4 @@ class Deck:
     description: str
     sub_deck: List[SubDeck] = field(default_factory=list)
     creation_date: datetime = None
-    id: int = None
+    id: int = None  # pylint: disable=C0103

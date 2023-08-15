@@ -1,3 +1,4 @@
+"""User Subdeck."""
 import datetime
 from dataclasses import dataclass
 

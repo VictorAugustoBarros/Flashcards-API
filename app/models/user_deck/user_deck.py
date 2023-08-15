@@ -1,10 +1,11 @@
+"""UserDeck Model."""
 import datetime
 from dataclasses import dataclass
 
 
 @dataclass
 class UserDeck:
-    """Classe modelo do Users."""
+    """Classe modelo do UserDeck."""
 
     user_id: int
     deck_id: int

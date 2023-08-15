@@ -1,3 +1,4 @@
+"""MySQL Users model."""
 from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.orm import relationship
 
@@ -5,6 +6,8 @@ from app.connections.mysql.mysql_base import Base
 
 
 class MySQLUser(Base):
+    """Classe modelo do SQLAlchemy da tabela users"""
+
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)

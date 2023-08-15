@@ -1,3 +1,4 @@
+"""Subdeck Model."""
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import List
@@ -13,4 +14,4 @@ class SubDeck:
     description: str
     cards: List[Card] = field(default_factory=list)
     creation_date: datetime = None
-    id: int = None
+    id: int = None  # pylint: disable=C0103

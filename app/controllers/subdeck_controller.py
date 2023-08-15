@@ -2,13 +2,11 @@
 from datetime import datetime
 
 from sqlalchemy.orm import joinedload
-from sqlalchemy.orm.collections import InstrumentedList
 
 from app.connections.mysql.models.mysql_subdeck import MySQLSubDeck
-from app.connections.mysql.models.mysql_card import MySQLCard
-from app.dependencies import Dependencies
 from app.models.cards.card import Card
 from app.models.subdecks.subdeck import SubDeck
+from app.utils.dependencies import Dependencies
 
 
 class SubDeckController:
@@ -47,19 +45,17 @@ class SubDeckController:
     def get_subdeck(self, subdeck_id: int):
         session = self.database.session()
 
-        row = (
+        subdeck = (
             session.query(MySQLSubDeck)
             .filter(MySQLSubDeck.id == subdeck_id)
-            .options(
-                joinedload(MySQLSubDeck.cards, innerjoin=True)
-            )
+            .options(joinedload(MySQLSubDeck.cards, innerjoin=False))
             .first()
         )
-        if not row:
+        if not subdeck:
             return None
 
         cards = []
-        for card in row.cards:
+        for card in subdeck.cards:
             cards.append(
                 Card(
                     id=card.id,
@@ -70,10 +66,10 @@ class SubDeckController:
             )
 
         return SubDeck(
-            id=row.id,
-            name=row.name,
-            description=row.description,
-            creation_date=row.creation_date,
+            id=subdeck.id,
+            name=subdeck.name,
+            description=subdeck.description,
+            creation_date=subdeck.creation_date,
             cards=cards,
         )
 
@@ -85,18 +81,18 @@ class SubDeckController:
         """
         session = self.database.session()
 
-        rows = (
+        subdecks = (
             session.query(MySQLSubDeck)
             .options(
-                joinedload(MySQLSubDeck.cards, innerjoin=True)
+                joinedload(MySQLSubDeck.cards, innerjoin=False)
             )
             .all()
         )
 
-        decks = []
-        for row in rows:
+        all_subdecks = []
+        for subdeck in subdecks:
             cards = []
-            for card in row.cards:
+            for card in subdeck.cards:
                 cards.append(
                     Card(
                         id=card.id,
@@ -106,14 +102,23 @@ class SubDeckController:
                     )
                 )
 
-            decks.append(
+            all_subdecks.append(
                 SubDeck(
-                    id=row.id,
-                    name=row.name,
-                    description=row.description,
-                    creation_date=row.creation_date,
+                    id=subdeck.id,
+                    name=subdeck.name,
+                    description=subdeck.description,
+                    creation_date=subdeck.creation_date,
                     cards=cards,
                 )
             )
 
-        return decks
+        return all_subdecks
+
+    def validate_subdeck_exists(self, subdeck_id: int) -> bool:
+        session = self.database.session()
+
+        existing_subdeck = (
+            session.query(MySQLSubDeck).filter(MySQLSubDeck.id == subdeck_id).first()
+        )
+
+        return True if existing_subdeck else False

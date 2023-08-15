@@ -1,7 +1,7 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-from app.connections.mysql.models.mysql_base import Base
+from app.connections.mysql.mysql_base import Base
 
 
 class MySQLSubDeck(Base):
@@ -15,3 +15,4 @@ class MySQLSubDeck(Base):
 
     deck = relationship("MySQLDeck", back_populates="subdecks")
     cards = relationship("MySQLCard", back_populates="subdecks")
+    subdeck_user = relationship("MySQLUserSubDeck", back_populates="subdeck")

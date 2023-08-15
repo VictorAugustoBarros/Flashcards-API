@@ -1,5 +1,5 @@
 import datetime
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List
 
 from app.models.subdecks.subdeck import SubDeck
@@ -11,6 +11,6 @@ class Deck:
 
     name: str
     description: str
-    sub_deck: List[SubDeck]
+    sub_deck: List[SubDeck] = field(default_factory=list)
     creation_date: datetime = None
     id: int = None

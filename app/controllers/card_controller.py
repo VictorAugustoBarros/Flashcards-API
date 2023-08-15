@@ -1,9 +1,10 @@
 """Card Controller."""
 from datetime import datetime
+from typing import Optional
 
 from app.connections.mysql.models.mysql_card import MySQLCard
-from app.dependencies import Dependencies
 from app.models.cards.card import Card
+from app.utils.dependencies import Dependencies
 
 
 class CardController:
@@ -12,7 +13,6 @@ class CardController:
     def __init__(self):
         """Construtor da classe."""
         self.database = Dependencies.database
-        self.collection = "Cards"
 
     def insert_card(self, card: Card, subdeck_id: int):
         """Inserção de um novo Card.
@@ -47,36 +47,39 @@ class CardController:
         """
         session = self.database.session()
 
-        rows = session.query(MySQLCard).all()
+        cards = session.query(MySQLCard).all()
 
-        cards = []
-        for row in rows:
-            cards.append(
+        all_cards = []
+        for card in cards:
+            all_cards.append(
                 Card(
-                    id=row.id,
-                    question=row.question,
-                    answer=row.answer,
-                    creation_date=row.creation_date,
+                    id=card.id,
+                    question=card.question,
+                    answer=card.answer,
+                    creation_date=card.creation_date,
                 )
             )
 
-        return cards
+        return all_cards
 
-    def get_card(self, card_id: int):
+    def get_card(self, card_id: int) -> Optional[Card]:
+        """Função resolve para busca do Card por ID
+
+        Args:
+            card_id (int): ID do Card
+
+        Returns:
+            card(Card): Card encontrado
+        """
         session = self.database.session()
 
-        row = (
-            session.query(MySQLCard)
-            .filter(MySQLCard.id == card_id)
-            .first()
-        )
-
-        if not row:
+        card = session.query(MySQLCard).filter(MySQLCard.id == card_id).first()
+        if not card:
             return None
 
         return Card(
-            id=row.id,
-            question=row.question,
-            answer=row.answer,
-            creation_date=row.creation_date,
+            id=card.id,
+            question=card.question,
+            answer=card.answer,
+            creation_date=card.creation_date,
         )

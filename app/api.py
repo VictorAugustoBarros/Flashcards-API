@@ -10,9 +10,6 @@ from app.routers.status import status_router
 from app.services.sentry import Sentry
 
 
-
-
-
 class CreateApp:
     """Classe para criação da API FastAPI."""
 

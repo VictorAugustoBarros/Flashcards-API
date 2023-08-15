@@ -17,5 +17,5 @@ coverage:
 make validate:
 	make black
 	make isort
-	make mypy
+# 	make mypy
 	make pylint

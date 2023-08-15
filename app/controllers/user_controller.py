@@ -5,8 +5,8 @@ from typing import List, Optional, Union
 from sqlalchemy import or_
 
 from app.connections.mysql.models.mysql_user import MySQLUser
-from app.dependencies import Dependencies
 from app.models.users.user import User
+from app.utils.dependencies import Dependencies
 
 
 class UserController:
@@ -33,7 +33,20 @@ class UserController:
         except Exception as error:
             raise error
 
-    def validate_user_exists(self, user: User):
+    def validate_user_exists(self, user_id: int) -> bool:
+        try:
+            session = self.database.session()
+
+            existing_user = (
+                session.query(MySQLUser).filter(MySQLUser.id == user_id).first()
+            )
+
+            return True if existing_user else False
+
+        except Exception as error:
+            raise error
+
+    def validate_user(self, user: User):
         """Validação se já existe um usuário com mesmo Email ou Username
 
         Args:
@@ -87,16 +100,16 @@ class UserController:
     def get_user(self, user_id: int) -> Optional[Union[None, User]]:
         session = self.database.session()
 
-        row = (session.query(MySQLUser).filter(MySQLUser.id == user_id).first())
-        if not row:
+        user = session.query(MySQLUser).filter(MySQLUser.id == user_id).first()
+        if not user:
             return None
 
         return User(
-            id=row.id,
-            email=row.email,
-            username=row.username,
-            password=row.password,
-            creation_date=row.creation_date,
+            id=user.id,
+            email=user.email,
+            username=user.username,
+            password=user.password,
+            creation_date=user.creation_date,
         )
 
     def get_all_users(self) -> List[User]:
@@ -107,18 +120,18 @@ class UserController:
         """
         session = self.database.session()
 
-        rows = session.query(MySQLUser).all()
+        users = session.query(MySQLUser).all()
 
-        users = []
-        for row in rows:
-            users.append(
+        all_users = []
+        for user in users:
+            all_users.append(
                 User(
-                    id=row.id,
-                    email=row.email,
-                    username=row.username,
-                    password=row.password,
-                    creation_date=row.creation_date,
+                    id=user.id,
+                    email=user.email,
+                    username=user.username,
+                    password=user.password,
+                    creation_date=user.creation_date,
                 )
             )
 
-        return users
+        return all_users

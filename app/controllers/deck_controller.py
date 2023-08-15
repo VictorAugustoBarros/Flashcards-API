@@ -6,10 +6,10 @@ from sqlalchemy.orm.collections import InstrumentedList
 
 from app.connections.mysql.models.mysql_deck import MySQLDeck
 from app.connections.mysql.models.mysql_subdeck import MySQLSubDeck
-from app.dependencies import Dependencies
 from app.models.cards.card import Card
 from app.models.decks.deck import Deck
 from app.models.subdecks.subdeck import SubDeck
+from app.utils.dependencies import Dependencies
 
 
 class DeckController:
@@ -18,7 +18,6 @@ class DeckController:
     def __init__(self):
         """Construtor da classe."""
         self.database = Dependencies.database
-        self.collection = "Decks"
 
     def insert_deck(self, deck: Deck):
         """Inserção de um novo Deck.
@@ -32,7 +31,11 @@ class DeckController:
         try:
             session = self.database.session()
 
-            mysql_deck = MySQLDeck(**deck.__dict__)
+            mysql_deck = MySQLDeck(
+                id=deck.id,
+                name=deck.name,
+                description=deck.description,
+            )
             mysql_deck.creation_date = datetime.now()
 
             session.add(mysql_deck)
@@ -46,54 +49,61 @@ class DeckController:
     def get_all_decks(self):
         session = self.database.session()
 
-        rows = (
+        decks = (
             session.query(MySQLDeck)
             .options(
-                joinedload(MySQLDeck.subdecks, innerjoin=True).joinedload(
+                joinedload(MySQLDeck.subdecks, innerjoin=False).joinedload(
                     MySQLSubDeck.cards
                 )
             )
             .all()
         )
 
-        decks = []
-        for row in rows:
-            sub_decks = self.map_subdecks_and_cards(row.subdecks)
-            decks.append(
+        all_decks = []
+        for deck in decks:
+            sub_decks = self.map_subdecks_and_cards(deck.subdecks)
+            all_decks.append(
                 Deck(
-                    id=row.id,
-                    name=row.name,
-                    description=row.description,
-                    creation_date=row.creation_date,
+                    id=deck.id,
+                    name=deck.name,
+                    description=deck.description,
+                    creation_date=deck.creation_date,
                     sub_deck=sub_decks,
                 )
             )
 
-        return decks
+        return all_decks
+
+    def validate_deck_exists(self, deck_id: int) -> bool:
+        session = self.database.session()
+
+        existing_deck = session.query(MySQLDeck).filter(MySQLDeck.id == deck_id).first()
+
+        return True if existing_deck else False
 
     def get_deck(self, deck_id: int):
         session = self.database.session()
 
-        row = (
+        deck = (
             session.query(MySQLDeck)
             .filter(MySQLDeck.id == deck_id)
             .options(
-                joinedload(MySQLDeck.subdecks, innerjoin=True).joinedload(
+                joinedload(MySQLDeck.subdecks, innerjoin=False).joinedload(
                     MySQLSubDeck.cards
                 )
             )
             .first()
         )
 
-        if not row:
+        if not deck:
             return None
 
-        sub_decks = self.map_subdecks_and_cards(row.subdecks)
+        sub_decks = self.map_subdecks_and_cards(deck.subdecks)
         return Deck(
-            id=row.id,
-            name=row.name,
-            description=row.description,
-            creation_date=row.creation_date,
+            id=deck.id,
+            name=deck.name,
+            description=deck.description,
+            creation_date=deck.creation_date,
             sub_deck=sub_decks,
         )
 

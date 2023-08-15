@@ -1,6 +1,7 @@
 from sqlalchemy import Column, DateTime, Integer, String
+from sqlalchemy.orm import relationship
 
-from app.connections.mysql.models.mysql_base import Base
+from app.connections.mysql.mysql_base import Base
 
 
 class MySQLUser(Base):
@@ -11,3 +12,6 @@ class MySQLUser(Base):
     email = Column(String(255))
     password = Column(String(255))
     creation_date = Column(DateTime)
+
+    deck_user = relationship("MySQLUserDeck", back_populates="user")
+    subdeck_user = relationship("MySQLUserSubDeck", back_populates="user")

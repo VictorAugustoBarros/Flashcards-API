@@ -1,7 +1,7 @@
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, Integer, String
 from sqlalchemy.orm import relationship
 
-from app.connections.mysql.models.mysql_base import Base
+from app.connections.mysql.mysql_base import Base
 
 
 class MySQLDeck(Base):
@@ -13,3 +13,4 @@ class MySQLDeck(Base):
     creation_date = Column(DateTime)
 
     subdecks = relationship("MySQLSubDeck", back_populates="deck")
+    deck_user = relationship("MySQLUserDeck", back_populates="deck")

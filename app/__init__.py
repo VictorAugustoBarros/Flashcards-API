@@ -1,3 +1,4 @@
+"""App Modules."""
 import os
 
 if os.getenv("ENVIRONMENT") == "LOCAL":

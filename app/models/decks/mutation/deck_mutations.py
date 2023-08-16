@@ -5,9 +5,11 @@ from app.controllers.deck_controller import DeckController
 from app.models.decks.deck import Deck
 from app.models.responses.deck_response import DeckResponse
 from app.models.responses.response import Response
+from app.utils.errors import DatabaseInsertFailed
+
+from app.connections.dependencies import Dependencies
 
 deck_mutation = MutationType()
-deck_controller = DeckController()
 
 
 @deck_mutation.field("add_deck")
@@ -24,6 +26,9 @@ def resolve_add_deck(_, info, name: str, description: str) -> DeckResponse:
         DeckResponse
     """
     try:
+        db_conn = Dependencies.database
+
+        deck_controller = DeckController(db_conn=db_conn)
         inserted_deck = deck_controller.insert_deck(
             deck=Deck(name=name, description=description)
         )
@@ -33,9 +38,10 @@ def resolve_add_deck(_, info, name: str, description: str) -> DeckResponse:
             response=Response(success=True, message="Deck criado com sucesso!"),
         )
 
-    except Exception as error:
-        DeckResponse(
-            response=Response(
-                success=False, message="Falha ao criar Deck!", error=str(error)
-            )
+    except DatabaseInsertFailed:
+        return DeckResponse(
+            response=Response(success=False, error="Falha ao criar Deck!")
         )
+
+    except Exception as error:
+        raise error

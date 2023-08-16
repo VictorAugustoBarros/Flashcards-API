@@ -1,15 +1,18 @@
 """Card Mutations GraphQL."""
 from ariadne import MutationType
 
+from app.connections.dependencies import Dependencies
 from app.controllers.deck_controller import DeckController
 from app.controllers.user_controller import UserController
 from app.controllers.user_deck_controller import UserDeckController
 from app.models.responses.response import Response
 
 user_deck_mutation = MutationType()
-user_deck_controller = UserDeckController()
-user_controller = UserController()
-deck_controller = DeckController()
+db_conn = Dependencies.create_database()
+
+user_deck_controller = UserDeckController(db_conn=db_conn)
+user_controller = UserController(db_conn=db_conn)
+deck_controller = DeckController(db_conn=db_conn)
 
 
 @user_deck_mutation.field("link_user_deck")

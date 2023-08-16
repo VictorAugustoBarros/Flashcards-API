@@ -2,12 +2,17 @@
 from ariadne import MutationType
 
 from app.controllers.card_controller import CardController
+from app.controllers.subdeck_controller import SubDeckController
 from app.models.cards.card import Card
 from app.models.responses.card_response import CardResponse
 from app.models.responses.response import Response
+from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed
+from app.connections.dependencies import Dependencies
 
 card_mutation = MutationType()
-card_controller = CardController()
+db_conn = Dependencies().create_database()
+card_controller = CardController(db_conn=db_conn)
+subdeck_controller = SubDeckController(db_conn=db_conn)
 
 
 @card_mutation.field("add_card")
@@ -27,6 +32,16 @@ def resolve_add_card(
         Response: Resposta do sucesso da operação
     """
     try:
+        sudeck_exists = subdeck_controller.validate_subdeck_exists(
+            subdeck_id=subdeck_id
+        )
+        if not sudeck_exists:
+            return CardResponse(
+                response=Response(
+                    success=False, message="Não existe um SubDeck com esse ID!"
+                )
+            )
+
         inserted_card = card_controller.insert_card(
             card=Card(question=question, answer=answer), subdeck_id=subdeck_id
         )
@@ -35,10 +50,10 @@ def resolve_add_card(
             response=Response(success=True, message="Card criado com sucesso!"),
         )
 
-    except Exception as error:
-        # TODO -> Criar exception generica para Falha de inserção
+    except (DatabaseInsertFailed, DatabaseQueryFailed):
         return CardResponse(
-            response=Response(
-                success=False, message="Falha ao criar Card!", error=str(error)
-            )
+            response=Response(success=False, error="Falha ao criar Card!")
         )
+
+    except Exception as error:
+        raise error

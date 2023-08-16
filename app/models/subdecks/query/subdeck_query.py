@@ -3,15 +3,20 @@ from typing import List
 
 from ariadne import QueryType
 
+from app.connections.dependencies import Dependencies
 from app.controllers.subdeck_controller import SubDeckController
+from app.models.responses.response import Response
+from app.models.responses.subdeck_response import SubDeckResponse, SubDeckListResponse
 from app.models.subdecks.subdeck import SubDeck
+from app.utils.errors import DatabaseQueryFailed
 
 subdeck_query = QueryType()
-subdeck_controller = SubDeckController()
+db_conn = Dependencies.create_database()
+subdeck_controller = SubDeckController(db_conn=db_conn)
 
 
 @subdeck_query.field("get_subdeck")
-def resolve_get_subdeck(*_, subdeck_id: int) -> SubDeck:
+def resolve_get_subdeck(*_, subdeck_id: int) -> SubDeckResponse:
     """Busca de um SubDeck
 
     Args:
@@ -21,11 +26,21 @@ def resolve_get_subdeck(*_, subdeck_id: int) -> SubDeck:
     Returns:
         SubDeck
     """
-    return subdeck_controller.get_subdeck(subdeck_id=subdeck_id)
+    try:
+        subdeck = subdeck_controller.get_subdeck(subdeck_id=subdeck_id)
+        return SubDeckResponse(subdeck=subdeck, response=Response(success=True))
+
+    except DatabaseQueryFailed:
+        return SubDeckResponse(
+            response=Response(success=False, error="Falha ao buscar SubDeck")
+        )
+
+    except Exception as error:
+        raise error
 
 
 @subdeck_query.field("get_subdecks")
-def resolve_get_subdecks(*_) -> List[SubDeck]:
+def resolve_get_subdecks(*_) -> SubDeckListResponse:
     """Busca de todos os SubDecks cadastrados.
 
     Args:
@@ -34,4 +49,14 @@ def resolve_get_subdecks(*_) -> List[SubDeck]:
     Returns:
         List[SubDeck]: Lista com os SubDecks
     """
-    return subdeck_controller.get_all_subdecks()
+    try:
+        subdecks = subdeck_controller.get_all_subdecks()
+        return SubDeckListResponse(subdecks=subdecks, response=Response(success=True))
+
+    except DatabaseQueryFailed:
+        return SubDeckListResponse(
+            response=Response(success=False, error="Falha ao buscar SubDecks")
+        )
+
+    except Exception as error:
+        raise error

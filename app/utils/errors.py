@@ -1,0 +1,22 @@
+from sentry_sdk import capture_exception
+
+
+class DatabaseInsertFailed(Exception):
+    """Exceção para falhas de inserção no banco de dados."""
+
+    def __init__(self, _):
+        capture_exception(self)
+
+
+class DatabaseDeleteFailed(Exception):
+    """Exceção para falhas de deleção no banco de dados."""
+
+    def __init__(self, _):
+        capture_exception(self)
+
+
+class DatabaseQueryFailed(Exception):
+    """Exceção para falhas na busca das informações no banco de dados."""
+
+    def __init__(self, _):
+        capture_exception(self)

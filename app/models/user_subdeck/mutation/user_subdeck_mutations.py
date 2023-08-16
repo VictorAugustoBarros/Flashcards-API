@@ -1,15 +1,19 @@
 """Card Mutations GraphQL."""
 from ariadne import MutationType
 
+from app.connections.dependencies import Dependencies
 from app.controllers.subdeck_controller import SubDeckController
 from app.controllers.user_controller import UserController
 from app.controllers.user_subdeck_controller import UserSubDeckController
 from app.models.responses.response import Response
+from app.utils.errors import DatabaseInsertFailed
 
 user_subdeck_mutation = MutationType()
-user_subdeck_controller = UserSubDeckController()
-user_controller = UserController()
-subdeck_controller = SubDeckController()
+db_conn = Dependencies.create_database()
+
+user_subdeck_controller = UserSubDeckController(db_conn=db_conn)
+user_controller = UserController(db_conn=db_conn)
+subdeck_controller = SubDeckController(db_conn=db_conn)
 
 
 @user_subdeck_mutation.field("link_user_subdeck")
@@ -47,8 +51,8 @@ def resolve_add_user(_, info, user_id: int, subdeck_id: int) -> Response:
 
         return Response(success=True, message="Vinculo criado com sucesso!")
 
+    except DatabaseInsertFailed:
+        return Response(success=False, error="Falha ao criar Vinculo!")
+
     except Exception as error:
-        # TODO -> Criar exception generica para Falha de inserção
-        return Response(
-            success=False, message="Falha ao criar Vinculo!", error=str(error)
-        )
+        raise error

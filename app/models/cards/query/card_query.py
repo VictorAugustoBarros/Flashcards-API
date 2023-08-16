@@ -2,15 +2,20 @@
 from typing import Optional, List
 from ariadne import QueryType
 
+from app.connections.dependencies import Dependencies
 from app.controllers.card_controller import CardController
 from app.models.cards.card import Card
+from app.models.responses.card_response import CardResponse, CardListResponse
+from app.models.responses.response import Response
+from app.utils.errors import DatabaseQueryFailed
 
 card_query = QueryType()
-card_controller = CardController()
+db_conn = Dependencies.create_database()
+card_controller = CardController(db_conn=db_conn)
 
 
 @card_query.field("get_card")
-def resolve_get_card(*_, card_id: int) -> Optional[Card]:
+def resolve_get_card(*_, card_id: int) -> CardResponse:
     """Busca do Card por ID
 
     Args:
@@ -20,12 +25,21 @@ def resolve_get_card(*_, card_id: int) -> Optional[Card]:
     Returns:
         card(Card): Card encontrado
     """
-    card = card_controller.get_card(card_id=card_id)
-    return card
+    try:
+        card = card_controller.get_card(card_id=card_id)
+        return CardResponse(card=card, response=Response(success=True))
+
+    except DatabaseQueryFailed:
+        return CardResponse(
+            response=Response(success=False, error="Falha ao buscar Card")
+        )
+
+    except Exception as error:
+        raise error
 
 
 @card_query.field("get_cards")
-def resolve_get_cards(*_) -> List[Card]:
+def resolve_get_cards(*_) -> CardListResponse:
     """Busca dos cards cadastrados
 
     Args:
@@ -34,6 +48,14 @@ def resolve_get_cards(*_) -> List[Card]:
     Returns:
         cards(List[Card]): Lista de Cards
     """
-    cards = card_controller.get_all_cards()
+    try:
+        cards = card_controller.get_all_cards()
+        return CardListResponse(cards=cards, response=Response(success=True))
 
-    return cards
+    except DatabaseQueryFailed:
+        return CardListResponse(
+            response=Response(success=False, error="Falha ao buscar Cards")
+        )
+
+    except Exception as error:
+        raise error

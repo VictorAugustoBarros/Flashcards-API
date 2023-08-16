@@ -2,12 +2,15 @@
 from typing import List, Union, Optional
 
 from ariadne import QueryType
+
+from app.connections.dependencies import Dependencies
 from app.models.responses.response import Response
 from app.controllers.user_subdeck_controller import UserSubDeckController
 from app.models.subdecks.subdeck import SubDeck
 
 user_subdeck_query = QueryType()
-user_subdeck_controller = UserSubDeckController()
+db_conn = Dependencies.create_database()
+user_subdeck_controller = UserSubDeckController(db_conn=db_conn)
 
 
 @user_subdeck_query.field("get_user_subdeck")

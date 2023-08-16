@@ -6,17 +6,44 @@ from sqlalchemy import or_
 
 from app.connections.mysql.models.mysql_user import MySQLUser
 from app.models.users.user import User
-from app.utils.dependencies import Dependencies
+from app.connections.dependencies import Dependencies
+from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed
 
 
 class UserController:
     """Classe para gerenciamento dos Cards."""
 
-    def __init__(self):
+    def __init__(self, db_conn):
         """Construtor da classe."""
-        self.database = Dependencies.database
+        self.database = db_conn
 
-    def validate_username_exists(self, username: str):
+    def insert_user(self, user: User) -> User:
+        """Inserção de um novo Card.
+
+        Args:
+            user (User): User a ser inserido
+
+        Returns:
+            user (User): User com os dados atualizados
+        """
+        try:
+            session = self.database.session()
+
+            mysql_user = MySQLUser(**user.__dict__)
+            mysql_user.creation_date = datetime.now()
+
+            session.add(mysql_user)
+            session.commit()
+
+            user.id = mysql_user.id
+            user.creation_date = mysql_user.creation_date
+
+            return user
+
+        except Exception as error:
+            raise DatabaseInsertFailed(error)
+
+    def validate_username_exists(self, username: str) -> bool:
         try:
             session = self.database.session()
 
@@ -31,7 +58,7 @@ class UserController:
             return True if existing_username else False
 
         except Exception as error:
-            raise error
+            raise DatabaseQueryFailed(error)
 
     def validate_user_exists(self, user_id: int) -> bool:
         try:
@@ -44,7 +71,7 @@ class UserController:
             return True if existing_user else False
 
         except Exception as error:
-            raise error
+            raise DatabaseQueryFailed(error)
 
     def validate_user_email_username_exists(self, email: str, username: str) -> bool:
         """Validação se já existe um usuário com mesmo Email ou Username
@@ -75,48 +102,26 @@ class UserController:
             return True if existing_user else False
 
         except Exception as error:
-            raise error
+            raise DatabaseQueryFailed(error)
 
-    def insert_user(self, user: User) -> User:
-        """Inserção de um novo Card.
-
-        Args:
-            user (User): User a ser inserido
-
-        Returns:
-            user (User): User com os dados atualizados
-        """
+    def get_user(self, user_id: int) -> Optional[Union[None, User]]:
         try:
             session = self.database.session()
 
-            mysql_user = MySQLUser(**user.__dict__)
-            mysql_user.creation_date = datetime.now()
+            user = session.query(MySQLUser).filter(MySQLUser.id == user_id).first()
+            if not user:
+                return None
 
-            session.add(mysql_user)
-            session.commit()
-
-            user.id = mysql_user.id
-            user.creation_date = mysql_user.creation_date
-
-            return user
+            return User(
+                id=user.id,
+                email=user.email,
+                username=user.username,
+                password=user.password,
+                creation_date=user.creation_date,
+            )
 
         except Exception as error:
-            raise error
-
-    def get_user(self, user_id: int) -> Optional[Union[None, User]]:
-        session = self.database.session()
-
-        user = session.query(MySQLUser).filter(MySQLUser.id == user_id).first()
-        if not user:
-            return None
-
-        return User(
-            id=user.id,
-            email=user.email,
-            username=user.username,
-            password=user.password,
-            creation_date=user.creation_date,
-        )
+            raise DatabaseQueryFailed(error)
 
     def get_all_users(self) -> List[User]:
         """Busca de todos os Users cadastrados.
@@ -124,20 +129,24 @@ class UserController:
         Returns:
             users (list): Lista com todos os Cards
         """
-        session = self.database.session()
+        try:
+            session = self.database.session()
 
-        users = session.query(MySQLUser).all()
+            users = session.query(MySQLUser).all()
 
-        all_users = []
-        for user in users:
-            all_users.append(
-                User(
-                    id=user.id,
-                    email=user.email,
-                    username=user.username,
-                    password=user.password,
-                    creation_date=user.creation_date,
+            all_users = []
+            for user in users:
+                all_users.append(
+                    User(
+                        id=user.id,
+                        email=user.email,
+                        username=user.username,
+                        password=user.password,
+                        creation_date=user.creation_date,
+                    )
                 )
-            )
 
-        return all_users
+            return all_users
+
+        except Exception as error:
+            raise DatabaseQueryFailed(error)

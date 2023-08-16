@@ -7,16 +7,16 @@ from sqlalchemy import and_
 from app.connections.mysql.models.mysql_user_deck import MySQLUserDeck
 from app.controllers.deck_controller import DeckController
 from app.models.decks.deck import Deck
-from app.utils.dependencies import Dependencies
+from app.connections.dependencies import Dependencies
+from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed
 
 
 class UserDeckController:
     """Classe para controle do UserDeck."""
 
-    def __init__(self):
+    def __init__(self, db_conn):
         """Construtor da classe."""
-        self.database = Dependencies.database
-        self.deck_controller = DeckController()
+        self.deck_controller = DeckController(db_conn=db_conn)
 
     def insert_user_deck(self, user_id: int, deck_id: int) -> bool:
         """Inserção de um novo Deck
@@ -42,7 +42,7 @@ class UserDeckController:
             return True
 
         except Exception as error:
-            raise error
+            raise DatabaseInsertFailed(error)
 
     def get_user_deck(self, user_id: int) -> List[Deck]:
         """Busca dos decks cadastrados do usuário
@@ -69,18 +69,24 @@ class UserDeckController:
             return decks
 
         except Exception as error:
-            raise error
+            raise DatabaseQueryFailed(error)
 
     def validate_link_userdeck_exists(self, user_id: int, deck_id: int) -> bool:
-        List[Deck]
-        session = self.database.session()
+        try:
+            session = self.database.session()
 
-        existing_userdeck = (
-            session.query(MySQLUserDeck)
-            .filter(
-                and_(MySQLUserDeck.user_id == user_id, MySQLUserDeck.deck_id == deck_id)
+            existing_userdeck = (
+                session.query(MySQLUserDeck)
+                .filter(
+                    and_(
+                        MySQLUserDeck.user_id == user_id,
+                        MySQLUserDeck.deck_id == deck_id,
+                    )
+                )
+                .first()
             )
-            .first()
-        )
 
-        return True if existing_userdeck else False
+            return True if existing_userdeck else False
+
+        except Exception as error:
+            raise DatabaseQueryFailed(error)

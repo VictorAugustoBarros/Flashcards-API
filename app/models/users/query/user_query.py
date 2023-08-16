@@ -3,12 +3,15 @@ from typing import List
 
 from ariadne import QueryType
 
+from app.connections.dependencies import Dependencies
 from app.controllers.user_controller import UserController
 from app.models.responses.response import Response
 from app.models.users.user import User
+from app.utils.errors import DatabaseQueryFailed
 
 user_query = QueryType()
-user_controller = UserController()
+db_conn = Dependencies.create_database()
+user_controller = UserController(db_conn=db_conn)
 
 
 @user_query.field("get_user")
@@ -63,6 +66,9 @@ def resolve_validate_username(*_, username: str) -> Response:
             return Response(success=False, message="Username já existe!")
 
         return Response(success=True, message="Username disponível!")
+
+    except DatabaseQueryFailed:
+        return Response(success=False, message="Falha ao buscar User!")
 
     except Exception as error:
         raise error

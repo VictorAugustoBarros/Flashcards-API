@@ -14,8 +14,19 @@ type DeckResponse {
     response: Response
 }
 
+type DeckListResponse {
+    decks: [Deck]
+    response: Response
+}
+
+
 type SubDeckResponse {
     subdeck: SubDeck
+    response: Response
+}
+
+type SubDeckListResponse {
+    subdecks: [SubDeck]
     response: Response
 }
 
@@ -24,8 +35,10 @@ type CardResponse {
     response: Response
 }
 
-
-
+type CardListResponse {
+    cards: [Card]
+    response: Response
+}
 
 type Card {
     id: Int
@@ -69,16 +82,21 @@ type Deck {
 
 # Query
 type Query {
-    get_deck (deck_id: Int!): Deck
-    get_decks: [Deck]
-    get_subdeck(subdeck_id: Int!): SubDeck
-    get_subdecks: [SubDeck]
-    get_card (card_id: Int!): Card
-    get_cards: [Card]
-    get_user(user_id: Int!): User
+    get_deck (deck_id: Int!): DeckResponse
+    get_decks: DeckListResponse
+
+    get_subdeck(subdeck_id: Int!): SubDeckResponse
+    get_subdecks: SubDeckListResponse
+
+    get_card (card_id: Int!): CardResponse
+    get_cards: CardListResponse
+
+    get_user(user_id: Int!): UserResponse
     get_users: [User]
+
     get_user_deck(user_id: Int!): [Deck]!
     get_user_subdeck(user_id: Int!): [SubDeck]!
+
     validate_username(username: String!): Response!
 }
 

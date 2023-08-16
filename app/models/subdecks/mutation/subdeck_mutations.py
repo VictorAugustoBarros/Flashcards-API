@@ -1,15 +1,18 @@
 """Card Mutations GraphQL."""
 from ariadne import MutationType
 
+from app.connections.dependencies import Dependencies
 from app.controllers.deck_controller import DeckController
 from app.controllers.subdeck_controller import SubDeckController
 from app.models.responses.response import Response
 from app.models.responses.subdeck_response import SubDeckResponse
 from app.models.subdecks.subdeck import SubDeck
+from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed
 
 subdeck_mutation = MutationType()
-subdeck_controller = SubDeckController()
-deck_controller = DeckController()
+db_conn = Dependencies.create_database()
+subdeck_controller = SubDeckController(db_conn=db_conn)
+deck_controller = DeckController(db_conn=db_conn)
 
 
 @subdeck_mutation.field("add_subdeck")
@@ -47,10 +50,10 @@ def resolve_add_subdeck(
             response=Response(success=True, message="Subdeck criado com sucesso!"),
         )
 
-    except Exception as error:
-        # TODO -> Criar exception generica para Falha de inserção
+    except (DatabaseInsertFailed, DatabaseQueryFailed):
         return SubDeckResponse(
-            response=Response(
-                success=False, message="Falha ao criar Subdeck!", error=str(error)
-            )
+            response=Response(success=False, error="Falha ao criar Subdeck!")
         )
+
+    except Exception as error:
+        raise error

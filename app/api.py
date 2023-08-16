@@ -10,7 +10,10 @@ from app.routers.status import status_router
 from app.services.sentry import Sentry
 
 
-# TODO -> Ao criar um deck, retornar o ID do deck criado para realziar o vinculo facilmente
+# TODO -> Continuar os testes unitários
+
+# TODO -> Finalizar os Update / Delete de todas as querys / mutations
+# TODO -> Arrumar as docstring (mypy)
 
 
 class CreateApp:

@@ -8,4 +8,6 @@ from app.connections.mysql.mysql_db import MySQLDB
 class Dependencies:
     """Classe para Injeção de dependencias."""
 
-    database: MySQLDB = MySQLDB()
+    @staticmethod
+    def create_database():
+        return MySQLDB()

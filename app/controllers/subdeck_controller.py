@@ -1,20 +1,22 @@
 """SubDeck Controller."""
 from datetime import datetime
+from typing import List, Optional
 
 from sqlalchemy.orm import joinedload
 
 from app.connections.mysql.models.mysql_subdeck import MySQLSubDeck
 from app.models.cards.card import Card
 from app.models.subdecks.subdeck import SubDeck
-from app.utils.dependencies import Dependencies
+from app.connections.dependencies import Dependencies
+from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed, DatabaseDeleteFailed
 
 
 class SubDeckController:
     """Classe para gerenciamento dos SubDeck."""
 
-    def __init__(self):
+    def __init__(self, db_conn):
         """Construtor da classe."""
-        self.database = Dependencies.database
+        self.database = db_conn
 
     def insert_subdeck(self, subdeck: SubDeck, deck_id: int) -> SubDeck:
         """Inserção de um novo SubDeck.
@@ -42,55 +44,37 @@ class SubDeckController:
             return subdeck
 
         except Exception as error:
-            raise error
+            raise DatabaseInsertFailed(error)
 
-    def get_subdeck(self, subdeck_id: int):
-        session = self.database.session()
-
-        subdeck = (
-            session.query(MySQLSubDeck)
-            .filter(MySQLSubDeck.id == subdeck_id)
-            .options(joinedload(MySQLSubDeck.cards, innerjoin=False))
-            .first()
-        )
-        if not subdeck:
-            return None
-
-        cards = []
-        for card in subdeck.cards:
-            cards.append(
-                Card(
-                    id=card.id,
-                    question=card.question,
-                    answer=card.answer,
-                    creation_date=card.creation_date,
-                )
+    def delete_subdeck(self, subdeck_id: int) -> bool:
+        try:
+            session = self.database.session()
+            existing_subdeck = (
+                session.query(MySQLSubDeck).filter(MySQLSubDeck.id == subdeck_id).first()
             )
+            if existing_subdeck:
+                session.delete(existing_subdeck)
+                session.commit()
+                return True
 
-        return SubDeck(
-            id=subdeck.id,
-            name=subdeck.name,
-            description=subdeck.description,
-            creation_date=subdeck.creation_date,
-            cards=cards,
-        )
+            return False
 
-    def get_all_subdecks(self):
-        """Busca de todos os SubDecks cadastrados.
+        except Exception as error:
+            raise DatabaseDeleteFailed(error)
 
-        Returns:
-            subdecks (list): Lista com todos os Decks
-        """
-        session = self.database.session()
+    def get_subdeck(self, subdeck_id: int) -> Optional[SubDeck]:
+        try:
+            session = self.database.session()
 
-        subdecks = (
-            session.query(MySQLSubDeck)
-            .options(joinedload(MySQLSubDeck.cards, innerjoin=False))
-            .all()
-        )
+            subdeck = (
+                session.query(MySQLSubDeck)
+                .filter(MySQLSubDeck.id == subdeck_id)
+                .options(joinedload(MySQLSubDeck.cards, innerjoin=False))
+                .first()
+            )
+            if not subdeck:
+                return None
 
-        all_subdecks = []
-        for subdeck in subdecks:
             cards = []
             for card in subdeck.cards:
                 cards.append(
@@ -102,23 +86,71 @@ class SubDeckController:
                     )
                 )
 
-            all_subdecks.append(
-                SubDeck(
-                    id=subdeck.id,
-                    name=subdeck.name,
-                    description=subdeck.description,
-                    creation_date=subdeck.creation_date,
-                    cards=cards,
-                )
+            return SubDeck(
+                id=subdeck.id,
+                name=subdeck.name,
+                description=subdeck.description,
+                creation_date=subdeck.creation_date,
+                cards=cards,
             )
 
-        return all_subdecks
+        except Exception as error:
+            raise DatabaseQueryFailed(error)
+
+    def get_all_subdecks(self) -> List[SubDeck]:
+        """Busca de todos os SubDecks cadastrados.
+
+        Returns:
+            subdecks (list): Lista com todos os Decks
+        """
+        try:
+            session = self.database.session()
+
+            subdecks = (
+                session.query(MySQLSubDeck)
+                .options(joinedload(MySQLSubDeck.cards, innerjoin=False))
+                .all()
+            )
+
+            all_subdecks = []
+            for subdeck in subdecks:
+                cards = []
+                for card in subdeck.cards:
+                    cards.append(
+                        Card(
+                            id=card.id,
+                            question=card.question,
+                            answer=card.answer,
+                            creation_date=card.creation_date,
+                        )
+                    )
+
+                all_subdecks.append(
+                    SubDeck(
+                        id=subdeck.id,
+                        name=subdeck.name,
+                        description=subdeck.description,
+                        creation_date=subdeck.creation_date,
+                        cards=cards,
+                    )
+                )
+
+            return all_subdecks
+
+        except Exception as error:
+            raise DatabaseQueryFailed(error)
 
     def validate_subdeck_exists(self, subdeck_id: int) -> bool:
-        session = self.database.session()
+        try:
+            session = self.database.session()
 
-        existing_subdeck = (
-            session.query(MySQLSubDeck).filter(MySQLSubDeck.id == subdeck_id).first()
-        )
+            existing_subdeck = (
+                session.query(MySQLSubDeck)
+                .filter(MySQLSubDeck.id == subdeck_id)
+                .first()
+            )
 
-        return True if existing_subdeck else False
+            return True if existing_subdeck else False
+
+        except Exception as error:
+            raise DatabaseQueryFailed(error)

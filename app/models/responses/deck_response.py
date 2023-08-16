@@ -11,3 +11,11 @@ class DeckResponse:
 
     deck: Deck = None
     response: Response = None
+
+
+@dataclass
+class DeckListResponse:
+    """Modelo de resposta do Deck."""
+
+    decks: [Deck] = None
+    response: Response = None

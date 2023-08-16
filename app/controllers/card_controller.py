@@ -1,18 +1,18 @@
 """Card Controller."""
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 
 from app.connections.mysql.models.mysql_card import MySQLCard
 from app.models.cards.card import Card
-from app.utils.dependencies import Dependencies
+from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed
 
 
 class CardController:
     """Classe para gerenciamento dos Cards."""
 
-    def __init__(self):
+    def __init__(self, db_conn):
         """Construtor da classe."""
-        self.database = Dependencies.database
+        self.database = db_conn
 
     def insert_card(self, card: Card, subdeck_id: int) -> Card:
         """Inserção de um novo Card.
@@ -40,30 +40,50 @@ class CardController:
             return card
 
         except Exception as error:
-            raise error
+            raise DatabaseInsertFailed(error)
 
-    def get_all_cards(self):
+    def delete_card(self, card_id: int) -> bool:
+        try:
+            session = self.database.session()
+            existing_card = (
+                session.query(MySQLCard).filter(MySQLCard.id == card_id).first()
+            )
+            if not existing_card:
+                raise DatabaseInsertFailed("Card não existe!")
+
+            session.delete(existing_card)
+            session.commit()
+            return True
+
+        except Exception as error:
+            raise DatabaseInsertFailed(error)
+
+    def get_all_cards(self) -> List[Card]:
         """Busca de todos os Cards cadastrados.
 
         Returns:
             cards (list): Lista com todos os Cards
         """
-        session = self.database.session()
+        try:
+            session = self.database.session()
 
-        cards = session.query(MySQLCard).all()
+            cards = session.query(MySQLCard).all()
 
-        all_cards = []
-        for card in cards:
-            all_cards.append(
-                Card(
-                    id=card.id,
-                    question=card.question,
-                    answer=card.answer,
-                    creation_date=card.creation_date,
+            all_cards = []
+            for card in cards:
+                all_cards.append(
+                    Card(
+                        id=card.id,
+                        question=card.question,
+                        answer=card.answer,
+                        creation_date=card.creation_date,
+                    )
                 )
-            )
 
-        return all_cards
+            return all_cards
+
+        except Exception as error:
+            raise DatabaseQueryFailed(error)
 
     def get_card(self, card_id: int) -> Optional[Card]:
         """Função resolve para busca do Card por ID
@@ -74,15 +94,19 @@ class CardController:
         Returns:
             card(Card): Card encontrado
         """
-        session = self.database.session()
+        try:
+            session = self.database.session()
 
-        card = session.query(MySQLCard).filter(MySQLCard.id == card_id).first()
-        if not card:
-            return None
+            card = session.query(MySQLCard).filter(MySQLCard.id == card_id).first()
+            if not card:
+                return None
 
-        return Card(
-            id=card.id,
-            question=card.question,
-            answer=card.answer,
-            creation_date=card.creation_date,
-        )
+            return Card(
+                id=card.id,
+                question=card.question,
+                answer=card.answer,
+                creation_date=card.creation_date,
+            )
+
+        except Exception as error:
+            raise DatabaseQueryFailed(error)

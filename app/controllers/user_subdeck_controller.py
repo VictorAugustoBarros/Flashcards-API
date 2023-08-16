@@ -5,15 +5,16 @@ from sqlalchemy import and_
 
 from app.connections.mysql.models.mysql_user_subdeck import MySQLUserSubDeck
 from app.controllers.subdeck_controller import SubDeckController
-from app.models.decks.deck import Deck
-from app.utils.dependencies import Dependencies
+from app.models.subdecks.subdeck import SubDeck
+from app.connections.dependencies import Dependencies
+from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed
 
 
 class UserSubDeckController:
-    def __init__(self):
+    def __init__(self, db_conn):
         """Construtor da classe."""
-        self.database = Dependencies.database
-        self.subdeck_controller = SubDeckController()
+        self.database = db_conn
+        self.subdeck_controller = SubDeckController(db_conn=db_conn)
 
     def insert_user_subdeck(self, user_id: int, subdeck_id: int):
         try:
@@ -30,26 +31,29 @@ class UserSubDeckController:
             return True
 
         except Exception as error:
-            raise error
+            raise DatabaseInsertFailed(error)
 
     def validate_link_userdeck_exists(self, user_id: int, subdeck_id: int) -> bool:
+        try:
+            session = self.database.session()
 
-        session = self.database.session()
-
-        existing_usersubdeck = (
-            session.query(MySQLUserSubDeck)
-            .filter(
-                and_(
-                    MySQLUserSubDeck.user_id == user_id,
-                    MySQLUserSubDeck.subdeck_id == subdeck_id,
+            existing_usersubdeck = (
+                session.query(MySQLUserSubDeck)
+                .filter(
+                    and_(
+                        MySQLUserSubDeck.user_id == user_id,
+                        MySQLUserSubDeck.subdeck_id == subdeck_id,
+                    )
                 )
+                .first()
             )
-            .first()
-        )
 
-        return True if existing_usersubdeck else False
+            return True if existing_usersubdeck else False
 
-    def get_user_subdeck(self, user_id: int) -> List[Deck]:
+        except Exception as error:
+            raise DatabaseQueryFailed(error)
+
+    def get_user_subdeck(self, user_id: int) -> List[SubDeck]:
         """Busca dos Subdecks do usuário
 
         Args:
@@ -78,4 +82,4 @@ class UserSubDeckController:
             return decks
 
         except Exception as error:
-            raise error
+            raise DatabaseQueryFailed(error)

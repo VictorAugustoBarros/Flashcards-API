@@ -9,3 +9,14 @@ omit =
     app/models/cards.py
     app/models/decks.py
 
+    app/models/responses/card_response.py
+    app/gql_config/graphql_error.py
+    app/models/responses/deck_response.py
+    app/models/responses/response.py
+    app/models/responses/subdeck_response.py
+    app/models/responses/user_response.py
+    app/models/schema_importer.py
+    app/models/user_deck/user_deck.py
+    app/models/user_subdeck/user_subdeck.py
+    app/services/sentry.py
+    app/utils/credencials.py

@@ -12,6 +12,7 @@ from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed
 
 class TestCardController(TestCase):
     """Classe para testes unitário da classe CardController"""
+
     db_conn = None
     subdeck_controller = None
     card_controller = None
@@ -32,10 +33,14 @@ class TestCardController(TestCase):
         deck_inserted = self.deck_controller.insert_deck(deck=deck)
 
         subdeck = SubDeck(name="SubDeck Teste", description="Subdeck para testes")
-        subdeck_inserted = self.subdeck_controller.insert_subdeck(subdeck=subdeck, deck_id=deck_inserted.id)
+        subdeck_inserted = self.subdeck_controller.insert_subdeck(
+            subdeck=subdeck, deck_id=deck_inserted.id
+        )
 
         card = Card(question="Teste", answer="Teste")
-        card_inserted = self.card_controller.insert_card(card=card, subdeck_id=subdeck_inserted.id)
+        card_inserted = self.card_controller.insert_card(
+            card=card, subdeck_id=subdeck_inserted.id
+        )
 
         # Testes
         self.assertIsNotNone(card_inserted.id)
@@ -77,7 +82,9 @@ class TestCardController(TestCase):
 
     def test_get_all_cards_error(self):
         """Teste de falha da busca de todos os Cards cadastrados no banco"""
-        self.card_controller.database.session = Mock(side_effect=Exception("Simulating an error"))
+        self.card_controller.database.session = Mock(
+            side_effect=Exception("Simulating an error")
+        )
 
         with self.assertRaises(DatabaseQueryFailed):
             self.card_controller.get_all_cards()
@@ -91,7 +98,9 @@ class TestCardController(TestCase):
         mock_session.query.return_value = mock_query
 
         # Configurar os encadeamentos de chamadas
-        mock_filter.first.return_value = Card(question="PeruntaTeste", answer="RespostaTeste")
+        mock_filter.first.return_value = Card(
+            question="PeruntaTeste", answer="RespostaTeste"
+        )
 
         # Substituir temporariamente o método sessionmaker().session
         self.card_controller.database.session = Mock(return_value=mock_session)
@@ -122,7 +131,9 @@ class TestCardController(TestCase):
 
     def test_get_card_error(self):
         """Teste de falha da busca de todos os Cards cadastrados no banco"""
-        self.card_controller.database.session = Mock(side_effect=Exception("Simulating an error"))
+        self.card_controller.database.session = Mock(
+            side_effect=Exception("Simulating an error")
+        )
 
         with self.assertRaises(DatabaseQueryFailed):
             self.card_controller.get_card(card_id=1)

@@ -6,8 +6,11 @@ from sqlalchemy import or_
 
 from app.connections.mysql.models.mysql_user import MySQLUser
 from app.models.users.user import User
-from app.connections.dependencies import Dependencies
-from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed
+from app.utils.errors import (
+    DatabaseInsertFailed,
+    DatabaseQueryFailed,
+    DatabaseDeleteFailed,
+)
 
 
 class UserController:
@@ -104,7 +107,7 @@ class UserController:
         except Exception as error:
             raise DatabaseQueryFailed(error)
 
-    def get_user(self, user_id: int) -> Optional[Union[None, User]]:
+    def get_user(self, user_id: int) -> Optional[User]:
         try:
             session = self.database.session()
 
@@ -150,3 +153,19 @@ class UserController:
 
         except Exception as error:
             raise DatabaseQueryFailed(error)
+
+    def delete_user(self, user_id: int) -> bool:
+        try:
+            session = self.database.session()
+            existing_user = (
+                session.query(MySQLUser).filter(MySQLUser.id == user_id).first()
+            )
+            if existing_user:
+                session.delete(existing_user)
+                session.commit()
+                return True
+
+            return False
+
+        except Exception as error:
+            raise DatabaseDeleteFailed(error)

@@ -6,10 +6,10 @@ from sqlalchemy import and_
 from app.connections.mysql.models.mysql_user_subdeck import MySQLUserSubDeck
 from app.controllers.subdeck_controller import SubDeckController
 from app.models.subdecks.subdeck import SubDeck
-from app.connections.dependencies import Dependencies
 from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed
 
 
+# TODO -> Verificar a necessidade e remover caso necessário
 class UserSubDeckController:
     def __init__(self, db_conn):
         """Construtor da classe."""

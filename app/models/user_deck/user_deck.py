@@ -10,3 +10,4 @@ class UserDeck:
     user_id: int
     deck_id: int
     creation_date: datetime = None
+    id: int = None  # pylint: disable=C0103

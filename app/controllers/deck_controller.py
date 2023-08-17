@@ -11,7 +11,11 @@ from app.models.cards.card import Card
 from app.models.decks.deck import Deck
 from app.models.subdecks.subdeck import SubDeck
 from app.connections.dependencies import Dependencies
-from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed, DatabaseDeleteFailed
+from app.utils.errors import (
+    DatabaseInsertFailed,
+    DatabaseQueryFailed,
+    DatabaseDeleteFailed,
+)
 
 from sqlalchemy import delete
 
@@ -145,36 +149,28 @@ class DeckController:
 
     @staticmethod
     def map_subdecks_and_cards(
-            subdecks: InstrumentedList[MySQLSubDeck],
+        subdecks: List[MySQLSubDeck],
     ) -> List[SubDeck]:
-        try:
-            mapped_subdecks = []
-            for sub_deck in subdecks:
-                cards = []
-                for card in sub_deck.cards:
-                    cards.append(
-                        Card(
-                            id=card.id,
-                            question=card.question,
-                            answer=card.answer,
-                            creation_date=card.creation_date,
-                        )
-                    )
-
-                mapped_subdecks.append(
-                    SubDeck(
-                        id=sub_deck.id,
-                        name=sub_deck.name,
-                        description=sub_deck.description,
-                        creation_date=sub_deck.creation_date,
-                        cards=cards,
+        mapped_subdecks = []
+        for sub_deck in subdecks:
+            cards = []
+            for card in sub_deck.cards:
+                cards.append(
+                    Card(
+                        id=card.id,
+                        question=card.question,
+                        answer=card.answer,
+                        creation_date=card.creation_date,
                     )
                 )
-            return mapped_subdecks
 
-        except Exception as error:
-            raise DatabaseQueryFailed(error)
-
-
-if __name__ == '__main__':
-    DeckController(db_conn=Dependencies.database).insert_deck(deck=Deck(name="asasdas", description="asdasd"))
+            mapped_subdecks.append(
+                SubDeck(
+                    id=sub_deck.id,
+                    name=sub_deck.name,
+                    description=sub_deck.description,
+                    creation_date=sub_deck.creation_date,
+                    cards=cards,
+                )
+            )
+        return mapped_subdecks

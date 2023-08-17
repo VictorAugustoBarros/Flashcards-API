@@ -8,7 +8,12 @@ from app.connections.mysql.models.mysql_user_deck import MySQLUserDeck
 from app.controllers.deck_controller import DeckController
 from app.models.decks.deck import Deck
 from app.connections.dependencies import Dependencies
-from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed
+from app.models.user_deck.user_deck import UserDeck
+from app.utils.errors import (
+    DatabaseInsertFailed,
+    DatabaseQueryFailed,
+    DatabaseDeleteFailed,
+)
 
 
 class UserDeckController:
@@ -16,9 +21,10 @@ class UserDeckController:
 
     def __init__(self, db_conn):
         """Construtor da classe."""
+        self.database = db_conn
         self.deck_controller = DeckController(db_conn=db_conn)
 
-    def insert_user_deck(self, user_id: int, deck_id: int) -> bool:
+    def insert_user_deck(self, user_id: int, deck_id: int) -> UserDeck:
         """Inserção de um novo Deck
 
         Args:
@@ -39,7 +45,11 @@ class UserDeckController:
             session.add(mysql_user_deck)
             session.commit()
 
-            return True
+            return UserDeck(
+                id=mysql_user_deck.id,
+                user_id=user_id,
+                deck_id=deck_id,
+            )
 
         except Exception as error:
             raise DatabaseInsertFailed(error)
@@ -64,7 +74,8 @@ class UserDeckController:
 
             decks = []
             for user_deck in user_decks:
-                decks.append(self.deck_controller.get_deck(deck_id=user_deck.deck.id))
+                deck = self.deck_controller.get_deck(deck_id=user_deck.deck.id)
+                decks.append(deck)
 
             return decks
 
@@ -90,3 +101,21 @@ class UserDeckController:
 
         except Exception as error:
             raise DatabaseQueryFailed(error)
+
+    def delete_user_deck(self, user_deck_id: int) -> bool:
+        try:
+            session = self.database.session()
+            existing_user_deck = (
+                session.query(MySQLUserDeck)
+                .filter(MySQLUserDeck.id == user_deck_id)
+                .first()
+            )
+            if existing_user_deck:
+                session.delete(existing_user_deck)
+                session.commit()
+                return True
+
+            return False
+
+        except Exception as error:
+            raise DatabaseDeleteFailed(error)

@@ -8,7 +8,11 @@ from app.connections.mysql.models.mysql_subdeck import MySQLSubDeck
 from app.models.cards.card import Card
 from app.models.subdecks.subdeck import SubDeck
 from app.connections.dependencies import Dependencies
-from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed, DatabaseDeleteFailed
+from app.utils.errors import (
+    DatabaseInsertFailed,
+    DatabaseQueryFailed,
+    DatabaseDeleteFailed,
+)
 
 
 class SubDeckController:
@@ -50,7 +54,9 @@ class SubDeckController:
         try:
             session = self.database.session()
             existing_subdeck = (
-                session.query(MySQLSubDeck).filter(MySQLSubDeck.id == subdeck_id).first()
+                session.query(MySQLSubDeck)
+                .filter(MySQLSubDeck.id == subdeck_id)
+                .first()
             )
             if existing_subdeck:
                 session.delete(existing_subdeck)

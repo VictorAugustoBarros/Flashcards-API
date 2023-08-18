@@ -9,11 +9,17 @@ from app.models.schema_importer import graphql_schema
 from app.routers.status import status_router
 from app.services.sentry import Sentry
 
-
-# TODO -> Continuar os testes unitários
-
-# TODO -> Finalizar os Update / Delete de todas as querys / mutations
+# TODO -> Criar autenticação JWT
+# TODO -> Finalizar os Update
 # TODO -> Arrumar as docstring (mypy)
+
+# TODO -> Criar servidor da Amazon (Terraform)
+# TODO -> Estudar o Jenkins (Deploy automatizado)
+
+# TODO -> Fazer teste de carga (Locust)
+
+
+from fastapi.middleware.cors import CORSMiddleware
 
 
 class CreateApp:
@@ -22,6 +28,13 @@ class CreateApp:
     def __init__(self):
         """Construtor da classe."""
         self.app = FastAPI()
+        self.app.add_middleware(
+            CORSMiddleware,
+            allow_origins=["http://localhost:3000"],
+            allow_credentials=True,
+            allow_methods=["*"],
+            allow_headers=["*"],
+        )
 
     def load_routes(self):
         """Carregamento das rotas."""
@@ -47,6 +60,7 @@ class CreateApp:
 
 create_app = CreateApp()
 app = create_app.start()
+
 Sentry().start()
 
 if __name__ == "__main__":  # type: ignore

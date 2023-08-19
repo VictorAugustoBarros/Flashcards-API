@@ -39,3 +39,5 @@ if mongo_port and isinstance(mongo_port, str):  # type: ignore
 
 if mysql_port and isinstance(mysql_port, str):  # type: ignore
     mysql_port = int(mysql_port)  # type: ignore
+
+jwt_secret_key = os.getenv("JWT_SECRET_KEY")

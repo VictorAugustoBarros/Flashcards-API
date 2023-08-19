@@ -1,11 +1,12 @@
 """Card Controller."""
 from datetime import datetime
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Tuple, Any
 
 from sqlalchemy import or_
 
 from app.connections.mysql.models.mysql_user import MySQLUser
 from app.models.users.user import User
+from app.services.jwt_manager import JwtManager
 from app.utils.errors import (
     DatabaseInsertFailed,
     DatabaseQueryFailed,
@@ -59,6 +60,24 @@ class UserController:
             )
 
             return True if existing_username else False
+
+        except Exception as error:
+            raise DatabaseQueryFailed(error)
+
+    def validate_user_login(self, email: str, password: str) -> MySQLUser:
+        try:
+            session = self.database.session()
+
+            existing_username = (
+                session.query(MySQLUser)
+                .filter(
+                    MySQLUser.email == email,
+                    MySQLUser.password == password,
+                )
+                .first()
+            )
+
+            return existing_username
 
         except Exception as error:
             raise DatabaseQueryFailed(error)

@@ -9,7 +9,11 @@ from app.controllers.user_controller import UserController
 from app.controllers.user_deck_controller import UserDeckController
 from app.models.decks.deck import Deck
 from app.models.users.user import User
-from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed, DatabaseDeleteFailed
+from app.utils.errors import (
+    DatabaseInsertFailed,
+    DatabaseQueryFailed,
+    DatabaseDeleteFailed,
+)
 
 
 class TestUserDeckController(TestCase):
@@ -50,9 +54,7 @@ class TestUserDeckController(TestCase):
         )
 
         with self.assertRaises(DatabaseInsertFailed):
-            self.user_deck_controller.insert_user_deck(
-                user_id=1, deck_id=1
-            )
+            self.user_deck_controller.insert_user_deck(user_id=1, deck_id=1)
 
     def test_get_user_deck(self):
         """Teste de busca dos Deck vinculados a um User"""
@@ -60,13 +62,15 @@ class TestUserDeckController(TestCase):
         mock_filter = Mock()
         mock_session = Mock()
 
-        mock_filter.all.return_value = [MySQLUserDeck(
-            id=1234,
-            user_id=1,
-            deck_id=1,
-            creation_date=datetime.now(),
-            deck=MySQLDeck(id=1)
-        )]
+        mock_filter.all.return_value = [
+            MySQLUserDeck(
+                id=1234,
+                user_id=1,
+                deck_id=1,
+                creation_date=datetime.now(),
+                deck=MySQLDeck(id=1),
+            )
+        ]
 
         mock_query.filter.return_value = mock_filter
         mock_session.query.return_value = mock_query
@@ -74,7 +78,8 @@ class TestUserDeckController(TestCase):
         self.user_deck_controller.database.session = Mock(return_value=mock_session)
 
         self.user_deck_controller.deck_controller.get_deck = Mock(
-            return_value=Deck(id=123213, name="Deck1", description="Deck1"))
+            return_value=Deck(id=123213, name="Deck1", description="Deck1")
+        )
 
         decks = self.user_deck_controller.get_user_deck(user_id=1)
 
@@ -101,7 +106,9 @@ class TestUserDeckController(TestCase):
 
         self.user_deck_controller.database.session = Mock(return_value=mock_session)
 
-        user_deck_exists = self.user_deck_controller.validate_link_userdeck_exists(user_id=1, deck_id=1)
+        user_deck_exists = self.user_deck_controller.validate_link_userdeck_exists(
+            user_id=1, deck_id=1
+        )
 
         self.assertTrue(user_deck_exists)
 
@@ -117,7 +124,9 @@ class TestUserDeckController(TestCase):
 
         self.user_deck_controller.database.session = Mock(return_value=mock_session)
 
-        user_deck_exists = self.user_deck_controller.validate_link_userdeck_exists(user_id=1, deck_id=1)
+        user_deck_exists = self.user_deck_controller.validate_link_userdeck_exists(
+            user_id=1, deck_id=1
+        )
 
         self.assertFalse(user_deck_exists)
 
@@ -128,7 +137,9 @@ class TestUserDeckController(TestCase):
         )
 
         with self.assertRaises(DatabaseQueryFailed):
-            self.user_deck_controller.validate_link_userdeck_exists(user_id=1, deck_id=1)
+            self.user_deck_controller.validate_link_userdeck_exists(
+                user_id=1, deck_id=1
+            )
 
     def test_delete_user_deck(self):
         """Teste de deleção do vinculo entre um User e um Deck existente"""

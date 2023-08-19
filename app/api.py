@@ -9,14 +9,19 @@ from app.models.schema_importer import graphql_schema
 from app.routers.status import status_router
 from app.services.sentry import Sentry
 
-# TODO -> Criar autenticação JWT
-# TODO -> Finalizar os Update
+# Frontend
+# TODO -> Tela de Login / Cadastrar usuário
+# Cadastrar usuário -> Tela de Login
+# Tela de Login -> Home
+
+
+# Backend
+# TODO -> Finalizar os Updates (Mutations)
 # TODO -> Arrumar as docstring (mypy)
 
 # TODO -> Criar servidor da Amazon (Terraform)
 # TODO -> Estudar o Jenkins (Deploy automatizado)
-
-# TODO -> Fazer teste de carga (Locust)
+# TODO -> Fazer teste de carga em prod (Locust)
 
 
 from fastapi.middleware.cors import CORSMiddleware

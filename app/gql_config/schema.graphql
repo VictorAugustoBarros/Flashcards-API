@@ -9,6 +9,11 @@ type UserResponse {
     response: Response
 }
 
+type UserLoginResponse {
+    jwt_token: String!
+    response: Response
+}
+
 type DeckResponse {
     deck: Deck
     response: Response
@@ -98,6 +103,8 @@ type Query {
     get_user_subdeck(user_id: Int!): [SubDeck]!
 
     validate_username(username: String!): Response!
+    login(email: String!, password: String!): UserLoginResponse!
+    validate_user_auth(jwt_token: String!): Response!
 }
 
 # Mutation

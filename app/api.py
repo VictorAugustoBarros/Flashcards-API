@@ -10,9 +10,8 @@ from app.routers.status import status_router
 from app.services.sentry import Sentry
 
 # Frontend
-# TODO -> Tela de Login / Cadastrar usuário
-# Cadastrar usuário -> Tela de Login
-# Tela de Login -> Home
+# TODO -> Pensar no web design da aplicação
+# TODO -> Criar o básico do cadastro e visualização dos Decks/Subdecks/Cards
 
 
 # Backend

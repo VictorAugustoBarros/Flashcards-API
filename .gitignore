@@ -2,6 +2,9 @@
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
 
 app/__pycache__/
+**/__pycache__/**
+.coverage
+
 # User-specific stuff
 .env
 .idea

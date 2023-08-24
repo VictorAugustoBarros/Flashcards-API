@@ -3,13 +3,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.connections.mysql.mysql_base import Base
-from app.utils.credencials import (
-    mysql_database,
-    mysql_host,
-    mysql_password,
-    mysql_port,
-    mysql_user,
-)
+from app.utils.credencials import (mysql_database, mysql_host, mysql_password,
+                                   mysql_port, mysql_user)
 
 
 class MySQLDB:

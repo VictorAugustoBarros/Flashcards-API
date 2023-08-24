@@ -1,11 +1,12 @@
 """Card Query GraphQL."""
-from typing import Optional, List
+from typing import List, Optional
+
 from ariadne import QueryType
 
 from app.connections.dependencies import Dependencies
 from app.controllers.card_controller import CardController
 from app.models.cards.card import Card
-from app.models.responses.card_response import CardResponse, CardListResponse
+from app.models.responses.card_response import CardListResponse, CardResponse
 from app.models.responses.response import Response
 from app.utils.errors import DatabaseQueryFailed
 

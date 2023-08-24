@@ -20,3 +20,17 @@ class DatabaseQueryFailed(Exception):
 
     def __init__(self, _):
         capture_exception(self)
+
+
+class TokenError(Exception):
+    pass
+
+
+class InvalidToken(Exception):
+    def __str__(self):
+        return "Token Inválido!"
+
+
+class ExpiredToken(Exception):
+    def __str__(self):
+        return "Token Expirado!"

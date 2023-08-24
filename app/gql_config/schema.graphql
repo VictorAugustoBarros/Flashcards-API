@@ -99,7 +99,7 @@ type Query {
     get_user(user_id: Int!): UserResponse
     get_users: [User]
 
-    get_user_deck(user_id: Int!): [Deck]!
+    get_user_deck: DeckListResponse!
     get_user_subdeck(user_id: Int!): [SubDeck]!
 
     validate_username(username: String!): Response!

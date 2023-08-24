@@ -1,8 +1,8 @@
 """Card Response Model."""
 from dataclasses import dataclass, field
 
-from app.models.responses.response import Response
 from app.models.cards.card import Card
+from app.models.responses.response import Response
 
 
 @dataclass

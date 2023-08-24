@@ -1,11 +1,11 @@
 """Card Query GraphQL."""
-from typing import List, Union, Optional
+from typing import List, Optional, Union
 
 from ariadne import QueryType
 
 from app.connections.dependencies import Dependencies
-from app.models.responses.response import Response
 from app.controllers.user_subdeck_controller import UserSubDeckController
+from app.models.responses.response import Response
 from app.models.subdecks.subdeck import SubDeck
 
 user_subdeck_query = QueryType()

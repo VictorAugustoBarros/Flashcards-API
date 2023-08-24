@@ -4,16 +4,13 @@ from typing import List
 
 from sqlalchemy import and_
 
+from app.connections.dependencies import Dependencies
 from app.connections.mysql.models.mysql_user_deck import MySQLUserDeck
 from app.controllers.deck_controller import DeckController
 from app.models.decks.deck import Deck
-from app.connections.dependencies import Dependencies
 from app.models.user_deck.user_deck import UserDeck
-from app.utils.errors import (
-    DatabaseInsertFailed,
-    DatabaseQueryFailed,
-    DatabaseDeleteFailed,
-)
+from app.utils.errors import (DatabaseDeleteFailed, DatabaseInsertFailed,
+                              DatabaseQueryFailed)
 
 
 class UserDeckController:

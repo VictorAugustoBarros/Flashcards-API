@@ -1,13 +1,13 @@
 """Card Mutations GraphQL."""
 from ariadne import MutationType
 
+from app.connections.dependencies import Dependencies
 from app.controllers.card_controller import CardController
 from app.controllers.subdeck_controller import SubDeckController
 from app.models.cards.card import Card
 from app.models.responses.card_response import CardResponse
 from app.models.responses.response import Response
 from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed
-from app.connections.dependencies import Dependencies
 
 card_mutation = MutationType()
 db_conn = Dependencies().create_database()

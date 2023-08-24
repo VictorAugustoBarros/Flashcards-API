@@ -2,22 +2,18 @@
 from datetime import datetime
 from typing import List, Optional
 
+from sqlalchemy import delete
 from sqlalchemy.orm import joinedload
 from sqlalchemy.orm.collections import InstrumentedList
 
+from app.connections.dependencies import Dependencies
 from app.connections.mysql.models.mysql_deck import MySQLDeck
 from app.connections.mysql.models.mysql_subdeck import MySQLSubDeck
 from app.models.cards.card import Card
 from app.models.decks.deck import Deck
 from app.models.subdecks.subdeck import SubDeck
-from app.connections.dependencies import Dependencies
-from app.utils.errors import (
-    DatabaseInsertFailed,
-    DatabaseQueryFailed,
-    DatabaseDeleteFailed,
-)
-
-from sqlalchemy import delete
+from app.utils.errors import (DatabaseDeleteFailed, DatabaseInsertFailed,
+                              DatabaseQueryFailed)
 
 
 class DeckController:

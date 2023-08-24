@@ -1,8 +1,8 @@
 """Deck Response Model"""
 from dataclasses import dataclass
 
-from app.models.responses.response import Response
 from app.models.decks.deck import Deck
+from app.models.responses.response import Response
 
 
 @dataclass

@@ -1,6 +1,6 @@
 """Card Controller."""
 from datetime import datetime
-from typing import Optional, List
+from typing import List, Optional
 
 from app.connections.mysql.models.mysql_card import MySQLCard
 from app.models.cards.card import Card

@@ -1,17 +1,16 @@
 """Card Query GraphQL."""
 from typing import List
-from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 
 from ariadne import QueryType
+from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
 
 from app.connections.dependencies import Dependencies
 from app.controllers.user_controller import UserController
 from app.models.responses.response import Response
 from app.models.responses.user_login_response import UserLoginResponse
 from app.models.users.user import User
-from app.utils.errors import DatabaseQueryFailed
-
 from app.services.jwt_manager import JwtManager
+from app.utils.errors import DatabaseQueryFailed
 
 user_query = QueryType()
 db_conn = Dependencies.create_database()
@@ -91,19 +90,15 @@ def resolve_login(*_, email: str, password: str) -> UserLoginResponse:
         UserLoginResponse
     """
     try:
-        user = user_controller.validate_user_login(
-            email=email, password=password
-        )
+        user = user_controller.validate_user_login(email=email, password=password)
         if not user:
             return UserLoginResponse(
                 response=Response(success=False, message="Credenciais inválidas!")
             )
 
-        jwt_token = JwtManager.create_token(user_data={
-            "id": user.id,
-            "email": user.email,
-            "username": user.username
-        })
+        jwt_token = JwtManager.create_token(
+            user_data={"id": user.id, "email": user.email, "username": user.username}
+        )
 
         return UserLoginResponse(
             jwt_token=jwt_token,

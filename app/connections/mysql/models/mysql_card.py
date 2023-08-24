@@ -1,6 +1,7 @@
 """MySQL User SubDeck model."""
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
+
 from app.connections.mysql.mysql_base import Base
 
 

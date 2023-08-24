@@ -3,27 +3,26 @@ import os
 
 from ariadne.asgi import GraphQL
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.gql_config.graphql_error import graphql_format_error
 from app.models.schema_importer import graphql_schema
 from app.routers.status import status_router
 from app.services.sentry import Sentry
+from app.validations.middleware_validation import MiddlewareValidation
+
+
+# TODO -> Aplicar o Nuxt no projeto (estudar)
+# TODO -> Finalizar a criação do SubDeck (front/back)
+# TODO -> Iniciar a criação dos Cards (front/back)
 
 # Frontend
-# TODO -> Pensar no web design da aplicação
 # TODO -> Criar o básico do cadastro e visualização dos Decks/Subdecks/Cards
-
+# TODO -> Pensar no web design da aplicação
 
 # Backend
 # TODO -> Finalizar os Updates (Mutations)
 # TODO -> Arrumar as docstring (mypy)
-
-# TODO -> Criar servidor da Amazon (Terraform)
-# TODO -> Estudar o Jenkins (Deploy automatizado)
-# TODO -> Fazer teste de carga em prod (Locust)
-
-
-from fastapi.middleware.cors import CORSMiddleware
 
 
 class CreateApp:
@@ -45,11 +44,13 @@ class CreateApp:
         self.app.include_router(status_router)
 
     def load_graphql(self):
+        middleware_validation = MiddlewareValidation()
+
         """Instancia do GraphQL e seus Schemas."""
         self.app.mount(
             "/graphql",
             GraphQL(
-                graphql_schema,
+                schema=graphql_schema,
                 error_formatter=graphql_format_error,
                 debug=os.getenv("DEBUG", "False") == "True",
             ),

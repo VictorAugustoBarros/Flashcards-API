@@ -1,15 +1,17 @@
+from datetime import datetime, timedelta
+
 import jwt
 from jwt.exceptions import ExpiredSignatureError, InvalidTokenError
-from datetime import datetime, timedelta
+
 from app.utils.credencials import jwt_secret_key
+from app.utils.errors import ExpiredToken, InvalidToken
 
 
 class JwtManager:
-
     @staticmethod
     def create_token(user_data: dict):
         """Criando um Token JWT"""
-        user_data.update({"exp": datetime.utcnow() + timedelta(hours=1)})
+        user_data.update({"exp": datetime.utcnow() + timedelta(days=1)})
         return jwt.encode(user_data, jwt_secret_key, algorithm="HS256")
 
     @staticmethod
@@ -17,11 +19,11 @@ class JwtManager:
         try:
             return jwt.decode(token, jwt_secret_key, algorithms=["HS256"])
 
-        except ExpiredSignatureError as error:
-            raise error
+        except ExpiredSignatureError:
+            raise ExpiredToken()
 
-        except InvalidTokenError as error:
-            raise error
+        except InvalidTokenError:
+            raise InvalidToken()
 
         except Exception as error:
             raise error

@@ -6,7 +6,8 @@ from ariadne import QueryType
 from app.connections.dependencies import Dependencies
 from app.controllers.subdeck_controller import SubDeckController
 from app.models.responses.response import Response
-from app.models.responses.subdeck_response import SubDeckResponse, SubDeckListResponse
+from app.models.responses.subdeck_response import (SubDeckListResponse,
+                                                   SubDeckResponse)
 from app.models.subdecks.subdeck import SubDeck
 from app.utils.errors import DatabaseQueryFailed
 

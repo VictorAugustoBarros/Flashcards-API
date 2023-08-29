@@ -1,9 +1,9 @@
 """Deck Controller."""
+
 from datetime import datetime
 from typing import List, Optional
 
-from sqlalchemy import delete
-from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import Session, joinedload
 from sqlalchemy.orm.collections import InstrumentedList
 
 from app.connections.dependencies import Dependencies
@@ -17,23 +17,27 @@ from app.utils.errors import (DatabaseDeleteFailed, DatabaseInsertFailed,
 
 
 class DeckController:
-    """Classe para gerenciamento dos Deck."""
+    """Class for managing Decks."""
 
-    def __init__(self, db_conn):
-        """Construtor da classe."""
+    def __init__(self, db_conn: Dependencies):
+        """Constructor of the class.
+
+        Args:
+            db_conn (Dependencies): Database connection object.
+        """
         self.database = db_conn
 
     def insert_deck(self, deck: Deck) -> Deck:
-        """Inserção de um novo Deck.
+        """Insert a new Deck into the database.
 
         Args:
-            deck (Deck): Deck a ser inserido
+            deck (Deck): Deck to be inserted.
 
         Returns:
-            inserted_id (int): ID do registro gerado pelo MongoDB
+            Deck: The inserted Deck with updated properties.
         """
         try:
-            session = self.database.session()
+            session: Session = self.database.session()
 
             mysql_deck = MySQLDeck(
                 id=deck.id,
@@ -53,8 +57,16 @@ class DeckController:
             raise DatabaseInsertFailed(error)
 
     def delete_deck(self, deck_id: int) -> bool:
+        """Delete a Deck from the database.
+
+        Args:
+            deck_id (int): ID of the Deck to be deleted.
+
+        Returns:
+            bool: True if deletion was successful, False otherwise.
+        """
         try:
-            session = self.database.session()
+            session: Session = self.database.session()
             existing_deck = (
                 session.query(MySQLDeck).filter(MySQLDeck.id == deck_id).first()
             )
@@ -69,8 +81,13 @@ class DeckController:
             raise DatabaseDeleteFailed(error)
 
     def get_all_decks(self) -> List[Deck]:
+        """Retrieve all Decks from the database.
+
+        Returns:
+            List[Deck]: List of all Decks with associated SubDecks and Cards.
+        """
         try:
-            session = self.database.session()
+            session: Session = self.database.session()
 
             decks = (
                 session.query(MySQLDeck)
@@ -101,8 +118,16 @@ class DeckController:
             raise DatabaseQueryFailed(error)
 
     def validate_deck_exists(self, deck_id: int) -> bool:
+        """Check if a Deck with the given ID exists in the database.
+
+        Args:
+            deck_id (int): ID of the Deck to check.
+
+        Returns:
+            bool: True if the Deck exists, False otherwise.
+        """
         try:
-            session = self.database.session()
+            session: Session = self.database.session()
 
             existing_deck = (
                 session.query(MySQLDeck).filter(MySQLDeck.id == deck_id).first()
@@ -114,8 +139,17 @@ class DeckController:
             raise DatabaseQueryFailed(error)
 
     def get_deck(self, deck_id: int) -> Optional[Deck]:
+        """Retrieve a Deck with the given ID from the database.
+
+        Args:
+            deck_id (int): ID of the Deck to retrieve.
+
+        Returns:
+            Optional[Deck]: The retrieved Deck with associated SubDecks and Cards,
+                           or None if the Deck doesn't exist.
+        """
         try:
-            session = self.database.session()
+            session: Session = self.database.session()
 
             deck = (
                 session.query(MySQLDeck)
@@ -144,9 +178,15 @@ class DeckController:
             raise DatabaseQueryFailed(error)
 
     @staticmethod
-    def map_subdecks_and_cards(
-        subdecks: List[MySQLSubDeck],
-    ) -> List[SubDeck]:
+    def map_subdecks_and_cards(subdecks: List[MySQLSubDeck]) -> List[SubDeck]:
+        """Map MySQLSubDeck objects to SubDeck objects with associated Cards.
+
+        Args:
+            subdecks (List[MySQLSubDeck]): List of MySQLSubDeck objects.
+
+        Returns:
+            List[SubDeck]: List of SubDeck objects with associated Cards.
+        """
         mapped_subdecks = []
         for sub_deck in subdecks:
             cards = []

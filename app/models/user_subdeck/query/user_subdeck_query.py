@@ -6,7 +6,10 @@ from ariadne import QueryType
 from app.connections.dependencies import Dependencies
 from app.controllers.user_subdeck_controller import UserSubDeckController
 from app.models.responses.response import Response
+from app.models.responses.subdeck_response import SubDeckListResponse
 from app.models.subdecks.subdeck import SubDeck
+from app.utils.errors import TokenError
+from app.validations.middleware_validation import validate_token
 
 user_subdeck_query = QueryType()
 db_conn = Dependencies.create_database()
@@ -14,21 +17,27 @@ user_subdeck_controller = UserSubDeckController(db_conn=db_conn)
 
 
 @user_subdeck_query.field("get_user_subdeck")
-def resolve_get_user_subdeck(
-    *_, user_id: int
-) -> Optional[Union[Response, List[SubDeck]]]:
+@validate_token
+def resolve_get_user_subdeck(*_, token: dict) -> SubDeckListResponse:
     """Busca dos Subdecks do usuário
 
     Args:
         *_:
-        user_id(int): ID do usuário
+        token(dict): Token do usuário
 
     Returns:
 
     """
     try:
-        return user_subdeck_controller.get_user_subdeck(user_id=user_id)
+        if not token["valid"]:
+            raise TokenError(token["error"])
+        user_info = token["user_info"]
+
+        subdecks = user_subdeck_controller.get_user_subdeck(user_id=user_info["id"])
+        return SubDeckListResponse(subdecks=subdecks, response=Response(success=True))
+
+    except TokenError as error:
+        return SubDeckListResponse(response=Response(success=False, error=str(error)))
 
     except Exception as error:
-        # TODO -> Criar exception generica para Falha de inserção
-        return Response(success=False, message="Falha ao criar Card!", error=str(error))
+        return SubDeckListResponse(response=Response(success=False, error="Falha ao criar Card!"))

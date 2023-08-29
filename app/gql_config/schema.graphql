@@ -100,7 +100,7 @@ type Query {
     get_users: [User]
 
     get_user_deck: DeckListResponse!
-    get_user_subdeck(user_id: Int!): [SubDeck]!
+    get_user_subdeck: SubDeckListResponse!
 
     validate_username(username: String!): Response!
     login(email: String!, password: String!): UserLoginResponse!

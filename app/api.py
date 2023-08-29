@@ -11,13 +11,9 @@ from app.routers.status import status_router
 from app.services.sentry import Sentry
 from app.validations.middleware_validation import MiddlewareValidation
 
-
 # TODO -> Aplicar o Nuxt no projeto (estudar)
-# TODO -> Finalizar a criação do SubDeck (front/back)
-# TODO -> Iniciar a criação dos Cards (front/back)
 
 # Frontend
-# TODO -> Criar o básico do cadastro e visualização dos Decks/Subdecks/Cards
 # TODO -> Pensar no web design da aplicação
 
 # Backend

@@ -25,17 +25,16 @@ class CardController:
             inserted_id (int): ID do registro gerado pelo MongoDB
         """
         try:
-            session = self.database.session()
+            with self.database.session() as session:
+                mysql_card = MySQLCard(**card.__dict__)
+                mysql_card.subdeck_id = subdeck_id
+                mysql_card.creation_date = datetime.now()
 
-            mysql_card = MySQLCard(**card.__dict__)
-            mysql_card.subdeck_id = subdeck_id
-            mysql_card.creation_date = datetime.now()
+                session.add(mysql_card)
+                session.commit()
 
-            session.add(mysql_card)
-            session.commit()
-
-            card.id = mysql_card.id
-            card.creation_date = mysql_card.creation_date
+                card.id = mysql_card.id
+                card.creation_date = mysql_card.creation_date
 
             return card
 
@@ -44,15 +43,15 @@ class CardController:
 
     def delete_card(self, card_id: int) -> bool:
         try:
-            session = self.database.session()
-            existing_card = (
-                session.query(MySQLCard).filter(MySQLCard.id == card_id).first()
-            )
-            if not existing_card:
-                raise DatabaseInsertFailed("Card não existe!")
+            with self.database.session() as session:
+                existing_card = (
+                    session.query(MySQLCard).filter(MySQLCard.id == card_id).first()
+                )
+                if not existing_card:
+                    raise DatabaseInsertFailed("Card não existe!")
 
-            session.delete(existing_card)
-            session.commit()
+                session.delete(existing_card)
+                session.commit()
             return True
 
         except Exception as error:
@@ -65,20 +64,20 @@ class CardController:
             cards (list): Lista com todos os Cards
         """
         try:
-            session = self.database.session()
+            with self.database.session() as session:
 
-            cards = session.query(MySQLCard).all()
+                cards = session.query(MySQLCard).all()
 
-            all_cards = []
-            for card in cards:
-                all_cards.append(
-                    Card(
-                        id=card.id,
-                        question=card.question,
-                        answer=card.answer,
-                        creation_date=card.creation_date,
+                all_cards = []
+                for card in cards:
+                    all_cards.append(
+                        Card(
+                            id=card.id,
+                            question=card.question,
+                            answer=card.answer,
+                            creation_date=card.creation_date,
+                        )
                     )
-                )
 
             return all_cards
 
@@ -95,11 +94,10 @@ class CardController:
             card(Card): Card encontrado
         """
         try:
-            session = self.database.session()
-
-            card = session.query(MySQLCard).filter(MySQLCard.id == card_id).first()
-            if not card:
-                return None
+            with self.database.session() as session:
+                card = session.query(MySQLCard).filter(MySQLCard.id == card_id).first()
+                if not card:
+                    return None
 
             return Card(
                 id=card.id,

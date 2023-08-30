@@ -32,21 +32,20 @@ class UserDeckController:
 
         """
         try:
-            session = self.database.session()
+            with self.database.session() as session:
+                mysql_user_deck = MySQLUserDeck()
+                mysql_user_deck.user_id = user_id
+                mysql_user_deck.deck_id = deck_id
+                mysql_user_deck.creation_date = datetime.now()
 
-            mysql_user_deck = MySQLUserDeck()
-            mysql_user_deck.user_id = user_id
-            mysql_user_deck.deck_id = deck_id
-            mysql_user_deck.creation_date = datetime.now()
+                session.add(mysql_user_deck)
+                session.commit()
 
-            session.add(mysql_user_deck)
-            session.commit()
-
-            return UserDeck(
-                id=mysql_user_deck.id,
-                user_id=user_id,
-                deck_id=deck_id,
-            )
+                return UserDeck(
+                    id=mysql_user_deck.id,
+                    user_id=user_id,
+                    deck_id=deck_id,
+                )
 
         except Exception as error:
             raise DatabaseInsertFailed(error)
@@ -61,18 +60,17 @@ class UserDeckController:
             List[Deck]: Lista com os Decks cadastrados
         """
         try:
-            session = self.database.session()
+            with self.database.session() as session:
+                user_decks = (
+                    session.query(MySQLUserDeck)
+                    .filter(MySQLUserDeck.user_id == user_id)
+                    .all()
+                )
 
-            user_decks = (
-                session.query(MySQLUserDeck)
-                .filter(MySQLUserDeck.user_id == user_id)
-                .all()
-            )
-
-            decks = []
-            for user_deck in user_decks:
-                deck = self.deck_controller.get_deck(deck_id=user_deck.deck.id)
-                decks.append(deck)
+                decks = []
+                for user_deck in user_decks:
+                    deck = self.deck_controller.get_deck(deck_id=user_deck.deck.id)
+                    decks.append(deck)
 
             return decks
 
@@ -81,18 +79,18 @@ class UserDeckController:
 
     def validate_link_userdeck_exists(self, user_id: int, deck_id: int) -> bool:
         try:
-            session = self.database.session()
+            with self.database.session() as session:
 
-            existing_userdeck = (
-                session.query(MySQLUserDeck)
-                .filter(
-                    and_(
-                        MySQLUserDeck.user_id == user_id,
-                        MySQLUserDeck.deck_id == deck_id,
+                existing_userdeck = (
+                    session.query(MySQLUserDeck)
+                    .filter(
+                        and_(
+                            MySQLUserDeck.user_id == user_id,
+                            MySQLUserDeck.deck_id == deck_id,
+                        )
                     )
+                    .first()
                 )
-                .first()
-            )
 
             return True if existing_userdeck else False
 
@@ -101,16 +99,16 @@ class UserDeckController:
 
     def delete_user_deck(self, user_deck_id: int) -> bool:
         try:
-            session = self.database.session()
-            existing_user_deck = (
-                session.query(MySQLUserDeck)
-                .filter(MySQLUserDeck.id == user_deck_id)
-                .first()
-            )
-            if existing_user_deck:
-                session.delete(existing_user_deck)
-                session.commit()
-                return True
+            with self.database.session() as session:
+                existing_user_deck = (
+                    session.query(MySQLUserDeck)
+                    .filter(MySQLUserDeck.id == user_deck_id)
+                    .first()
+                )
+                if existing_user_deck:
+                    session.delete(existing_user_deck)
+                    session.commit()
+                    return True
 
             return False
 

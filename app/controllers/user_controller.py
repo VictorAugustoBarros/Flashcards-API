@@ -28,16 +28,15 @@ class UserController:
             user (User): User com os dados atualizados
         """
         try:
-            session = self.database.session()
+            with self.database.session() as session:
+                mysql_user = MySQLUser(**user.__dict__)
+                mysql_user.creation_date = datetime.now()
 
-            mysql_user = MySQLUser(**user.__dict__)
-            mysql_user.creation_date = datetime.now()
+                session.add(mysql_user)
+                session.commit()
 
-            session.add(mysql_user)
-            session.commit()
-
-            user.id = mysql_user.id
-            user.creation_date = mysql_user.creation_date
+                user.id = mysql_user.id
+                user.creation_date = mysql_user.creation_date
 
             return user
 
@@ -46,15 +45,14 @@ class UserController:
 
     def validate_username_exists(self, username: str) -> bool:
         try:
-            session = self.database.session()
-
-            existing_username = (
-                session.query(MySQLUser)
-                .filter(
-                    MySQLUser.username == username,
+            with self.database.session() as session:
+                existing_username = (
+                    session.query(MySQLUser)
+                    .filter(
+                        MySQLUser.username == username,
+                    )
+                    .first()
                 )
-                .first()
-            )
 
             return True if existing_username else False
 
@@ -63,16 +61,15 @@ class UserController:
 
     def validate_user_login(self, email: str, password: str) -> MySQLUser:
         try:
-            session = self.database.session()
-
-            existing_username = (
-                session.query(MySQLUser)
-                .filter(
-                    MySQLUser.email == email,
-                    MySQLUser.password == password,
+            with self.database.session() as session:
+                existing_username = (
+                    session.query(MySQLUser)
+                    .filter(
+                        MySQLUser.email == email,
+                        MySQLUser.password == password,
+                    )
+                    .first()
                 )
-                .first()
-            )
 
             return existing_username
 
@@ -81,11 +78,10 @@ class UserController:
 
     def validate_user_exists(self, user_id: int) -> bool:
         try:
-            session = self.database.session()
-
-            existing_user = (
-                session.query(MySQLUser).filter(MySQLUser.id == user_id).first()
-            )
+            with self.database.session() as session:
+                existing_user = (
+                    session.query(MySQLUser).filter(MySQLUser.id == user_id).first()
+                )
 
             return True if existing_user else False
 
@@ -105,18 +101,17 @@ class UserController:
                 Fasle -> Email e Username disponíveis
         """
         try:
-            session = self.database.session()
-
-            existing_user = (
-                session.query(MySQLUser)
-                .filter(
-                    or_(
-                        MySQLUser.email == email,
-                        MySQLUser.username == username,
+            with self.database.session() as session:
+                existing_user = (
+                    session.query(MySQLUser)
+                    .filter(
+                        or_(
+                            MySQLUser.email == email,
+                            MySQLUser.username == username,
+                        )
                     )
+                    .first()
                 )
-                .first()
-            )
 
             return True if existing_user else False
 
@@ -125,11 +120,10 @@ class UserController:
 
     def get_user(self, user_id: int) -> Optional[User]:
         try:
-            session = self.database.session()
-
-            user = session.query(MySQLUser).filter(MySQLUser.id == user_id).first()
-            if not user:
-                return None
+            with self.database.session() as session:
+                user = session.query(MySQLUser).filter(MySQLUser.id == user_id).first()
+                if not user:
+                    return None
 
             return User(
                 id=user.id,
@@ -149,9 +143,8 @@ class UserController:
             users (list): Lista com todos os Cards
         """
         try:
-            session = self.database.session()
-
-            users = session.query(MySQLUser).all()
+            with self.database.session() as session:
+                users = session.query(MySQLUser).all()
 
             all_users = []
             for user in users:
@@ -172,14 +165,14 @@ class UserController:
 
     def delete_user(self, user_id: int) -> bool:
         try:
-            session = self.database.session()
-            existing_user = (
-                session.query(MySQLUser).filter(MySQLUser.id == user_id).first()
-            )
-            if existing_user:
-                session.delete(existing_user)
-                session.commit()
-                return True
+            with self.database.session() as session:
+                existing_user = (
+                    session.query(MySQLUser).filter(MySQLUser.id == user_id).first()
+                )
+                if existing_user:
+                    session.delete(existing_user)
+                    session.commit()
+                    return True
 
             return False
 

@@ -4,7 +4,6 @@ from datetime import datetime
 from typing import List, Optional
 
 from sqlalchemy.orm import Session, joinedload
-from sqlalchemy.orm.collections import InstrumentedList
 
 from app.connections.dependencies import Dependencies
 from app.connections.mysql.models.mysql_deck import MySQLDeck
@@ -19,11 +18,11 @@ from app.utils.errors import (DatabaseDeleteFailed, DatabaseInsertFailed,
 class DeckController:
     """Class for managing Decks."""
 
-    def __init__(self, db_conn: Dependencies):
+    def __init__(self, db_conn):
         """Constructor of the class.
 
         Args:
-            db_conn (Dependencies): Database connection object.
+            db_conn (): Database connection object.
         """
         self.database = db_conn
 
@@ -37,19 +36,18 @@ class DeckController:
             Deck: The inserted Deck with updated properties.
         """
         try:
-            session: Session = self.database.session()
+            with self.database.session() as session:
+                mysql_deck = MySQLDeck(
+                    id=deck.id,
+                    name=deck.name,
+                    description=deck.description,
+                )
+                mysql_deck.creation_date = datetime.now()
 
-            mysql_deck = MySQLDeck(
-                id=deck.id,
-                name=deck.name,
-                description=deck.description,
-            )
-            mysql_deck.creation_date = datetime.now()
-
-            session.add(mysql_deck)
-            session.commit()
-            deck.id = mysql_deck.id
-            deck.creation_date = mysql_deck.creation_date
+                session.add(mysql_deck)
+                session.commit()
+                deck.id = mysql_deck.id
+                deck.creation_date = mysql_deck.creation_date
 
             return deck
 
@@ -66,14 +64,14 @@ class DeckController:
             bool: True if deletion was successful, False otherwise.
         """
         try:
-            session: Session = self.database.session()
-            existing_deck = (
-                session.query(MySQLDeck).filter(MySQLDeck.id == deck_id).first()
-            )
-            if existing_deck:
-                session.delete(existing_deck)
-                session.commit()
-                return True
+            with self.database.session() as session:
+                existing_deck = (
+                    session.query(MySQLDeck).filter(MySQLDeck.id == deck_id).first()
+                )
+                if existing_deck:
+                    session.delete(existing_deck)
+                    session.commit()
+                    return True
 
             return False
 
@@ -87,30 +85,29 @@ class DeckController:
             List[Deck]: List of all Decks with associated SubDecks and Cards.
         """
         try:
-            session: Session = self.database.session()
-
-            decks = (
-                session.query(MySQLDeck)
-                .options(
-                    joinedload(MySQLDeck.subdecks, innerjoin=False).joinedload(
-                        MySQLSubDeck.cards
+            with self.database.session() as session:
+                decks = (
+                    session.query(MySQLDeck)
+                    .options(
+                        joinedload(MySQLDeck.subdecks, innerjoin=False).joinedload(
+                            MySQLSubDeck.cards
+                        )
                     )
+                    .all()
                 )
-                .all()
-            )
 
-            all_decks = []
-            for deck in decks:
-                sub_decks = self.map_subdecks_and_cards(deck.subdecks)
-                all_decks.append(
-                    Deck(
-                        id=deck.id,
-                        name=deck.name,
-                        description=deck.description,
-                        creation_date=deck.creation_date,
-                        sub_deck=sub_decks,
+                all_decks = []
+                for deck in decks:
+                    sub_decks = self.map_subdecks_and_cards(deck.subdecks)
+                    all_decks.append(
+                        Deck(
+                            id=deck.id,
+                            name=deck.name,
+                            description=deck.description,
+                            creation_date=deck.creation_date,
+                            sub_deck=sub_decks,
+                        )
                     )
-                )
 
             return all_decks
 
@@ -127,11 +124,10 @@ class DeckController:
             bool: True if the Deck exists, False otherwise.
         """
         try:
-            session: Session = self.database.session()
-
-            existing_deck = (
-                session.query(MySQLDeck).filter(MySQLDeck.id == deck_id).first()
-            )
+            with self.database.session() as session:
+                existing_deck = (
+                    session.query(MySQLDeck).filter(MySQLDeck.id == deck_id).first()
+                )
 
             return True if existing_deck else False
 
@@ -149,21 +145,20 @@ class DeckController:
                            or None if the Deck doesn't exist.
         """
         try:
-            session: Session = self.database.session()
-
-            deck = (
-                session.query(MySQLDeck)
-                .filter(MySQLDeck.id == deck_id)
-                .options(
-                    joinedload(MySQLDeck.subdecks, innerjoin=False).joinedload(
-                        MySQLSubDeck.cards
+            with self.database.session() as session:
+                deck = (
+                    session.query(MySQLDeck)
+                    .filter(MySQLDeck.id == deck_id)
+                    .options(
+                        joinedload(MySQLDeck.subdecks, innerjoin=False).joinedload(
+                            MySQLSubDeck.cards
+                        )
                     )
+                    .first()
                 )
-                .first()
-            )
 
-            if not deck:
-                return None
+                if not deck:
+                    return None
 
             sub_decks = self.map_subdecks_and_cards(deck.subdecks)
             return Deck(

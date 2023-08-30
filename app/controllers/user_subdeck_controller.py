@@ -18,15 +18,14 @@ class UserSubDeckController:
 
     def insert_user_subdeck(self, user_id: int, subdeck_id: int):
         try:
-            session = self.database.session()
+            with self.database.session() as session:
+                mysql_user_sub_deck = MySQLUserSubDeck()
+                mysql_user_sub_deck.user_id = user_id
+                mysql_user_sub_deck.subdeck_id = subdeck_id
+                mysql_user_sub_deck.creation_date = datetime.now()
 
-            mysql_user_sub_deck = MySQLUserSubDeck()
-            mysql_user_sub_deck.user_id = user_id
-            mysql_user_sub_deck.subdeck_id = subdeck_id
-            mysql_user_sub_deck.creation_date = datetime.now()
-
-            session.add(mysql_user_sub_deck)
-            session.commit()
+                session.add(mysql_user_sub_deck)
+                session.commit()
 
             return True
 
@@ -35,18 +34,18 @@ class UserSubDeckController:
 
     def validate_link_userdeck_exists(self, user_id: int, subdeck_id: int) -> bool:
         try:
-            session = self.database.session()
+            with self.database.session() as session:
 
-            existing_usersubdeck = (
-                session.query(MySQLUserSubDeck)
-                .filter(
-                    and_(
-                        MySQLUserSubDeck.user_id == user_id,
-                        MySQLUserSubDeck.subdeck_id == subdeck_id,
+                existing_usersubdeck = (
+                    session.query(MySQLUserSubDeck)
+                    .filter(
+                        and_(
+                            MySQLUserSubDeck.user_id == user_id,
+                            MySQLUserSubDeck.subdeck_id == subdeck_id,
+                        )
                     )
+                    .first()
                 )
-                .first()
-            )
 
             return True if existing_usersubdeck else False
 
@@ -63,21 +62,21 @@ class UserSubDeckController:
 
         """
         try:
-            session = self.database.session()
+            with self.database.session() as session:
 
-            user_subdecks = (
-                session.query(MySQLUserSubDeck)
-                .filter(MySQLUserSubDeck.user_id == user_id)
-                .all()
-            )
-
-            decks = []
-            for user_subdeck in user_subdecks:
-                decks.append(
-                    self.subdeck_controller.get_subdeck(
-                        subdeck_id=user_subdeck.subdeck.id
-                    )
+                user_subdecks = (
+                    session.query(MySQLUserSubDeck)
+                    .filter(MySQLUserSubDeck.user_id == user_id)
+                    .all()
                 )
+
+                decks = []
+                for user_subdeck in user_subdecks:
+                    decks.append(
+                        self.subdeck_controller.get_subdeck(
+                            subdeck_id=user_subdeck.subdeck.id
+                        )
+                    )
 
             return decks
 

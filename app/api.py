@@ -9,16 +9,15 @@ from app.gql_config.graphql_error import graphql_format_error
 from app.models.schema_importer import graphql_schema
 from app.routers.status import status_router
 from app.services.sentry import Sentry
-from app.validations.middleware_validation import MiddlewareValidation
 
-# TODO -> Aplicar o Nuxt no projeto (estudar)
 
 # Frontend
-# TODO -> Pensar no web design da aplicação
+# TODO -> Continuar no web design da aplicação
 
 # Backend
-# TODO -> Finalizar os Updates (Mutations)
+# TODO -> Finalizar os Updates/Deletes (Mutations)
 # TODO -> Arrumar as docstring (mypy)
+# TODO -> Aplicar o Nuxt no projeto (estudar)
 
 
 class CreateApp:
@@ -40,8 +39,6 @@ class CreateApp:
         self.app.include_router(status_router)
 
     def load_graphql(self):
-        middleware_validation = MiddlewareValidation()
-
         """Instancia do GraphQL e seus Schemas."""
         self.app.mount(
             "/graphql",

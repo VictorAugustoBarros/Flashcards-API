@@ -8,6 +8,7 @@ from app.controllers.deck_controller import DeckController
 from app.models.decks.deck import Deck
 from app.models.responses.deck_response import DeckListResponse, DeckResponse
 from app.models.responses.response import Response
+from app.models.responses.subdeck_response import SubDeckListResponse
 from app.utils.errors import DatabaseQueryFailed, TokenError
 from app.validations.middleware_validation import validate_token
 
@@ -67,6 +68,38 @@ def resolve_get_decks(*_) -> DeckListResponse:
         return DeckListResponse(
             response=Response(success=False, error="Falha ao buscar Decks")
         )
+
+    except Exception as error:
+        raise error
+
+
+@deck_query.field("get_deck_subdecks")
+@validate_token
+def resolve_get_deck_subdecks(*_, deck_id: int, token: dict) -> SubDeckListResponse:
+    """Busca de todos os Decks cadastrados
+
+    Args:
+        *_:
+        deck_id(int): Deck ID
+        token(dict): Validação do Token
+
+    Returns:
+        List[Deck]: Lista com os Decks cadastrados
+    """
+    try:
+        if not token["valid"]:
+            raise TokenError(token["error"])
+
+        subdecks = deck_controller.get_deck_subdecks(deck_id=deck_id)
+        return SubDeckListResponse(subdecks=subdecks, response=Response(success=True))
+
+    except DatabaseQueryFailed:
+        return SubDeckListResponse(
+            response=Response(success=False, error="Falha ao buscar SubDecks")
+        )
+
+    except TokenError as error:
+        return SubDeckListResponse(response=Response(success=False, error=str(error)))
 
     except Exception as error:
         raise error

@@ -172,6 +172,39 @@ class DeckController:
         except Exception as error:
             raise DatabaseQueryFailed(error)
 
+    def get_deck_subdecks(self, deck_id: int) -> Optional[List[SubDeck]]:
+        """
+
+        Args:
+            deck_id (int): Deck ID
+
+        Returns:
+            Optional[List[SubDeck]]:
+        """
+        try:
+            with self.database.session() as session:
+                subdecks = (
+                    session.query(MySQLSubDeck)
+                    .filter(MySQLSubDeck.deck_id == deck_id)
+                    .all()
+                )
+
+                if not subdecks:
+                    return None
+
+            subdecks_list = []
+            for subdeck in subdecks:
+                subdecks_list.append(SubDeck(
+                    id=subdeck.id,
+                    name=subdeck.name,
+                    description=subdeck.description,
+                    creation_date=subdeck.creation_date
+                ))
+
+            return subdecks_list
+        except Exception as error:
+            raise DatabaseQueryFailed(error)
+
     @staticmethod
     def map_subdecks_and_cards(subdecks: List[MySQLSubDeck]) -> List[SubDeck]:
         """Map MySQLSubDeck objects to SubDeck objects with associated Cards.

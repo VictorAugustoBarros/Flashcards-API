@@ -2,6 +2,9 @@
 from datetime import datetime
 from typing import List, Optional
 
+from sqlalchemy.orm import joinedload
+
+from app.connections.mysql import MySQLSubDeck
 from app.connections.mysql.models.mysql_card import MySQLCard
 from app.models.cards.card import Card
 from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed
@@ -105,6 +108,39 @@ class CardController:
                 answer=card.answer,
                 creation_date=card.creation_date,
             )
+
+        except Exception as error:
+            raise DatabaseQueryFailed(error)
+
+    def get_subdeck_cards(self, subdeck_id: int) -> Optional[List[Card]]:
+        """Função resolve para busca do Card por ID
+
+        Args:
+            subdeck_id (int): ID do Subdeck
+
+        Returns:
+            card(Card): Card encontrado
+        """
+        try:
+            with self.database.session() as session:
+                cards = (
+                    session.query(MySQLCard)
+                    .filter(MySQLCard.subdeck_id == subdeck_id)
+                    .all()
+                )
+                if not cards:
+                    return None
+
+            cards_list = []
+            for card in cards:
+                cards_list.append(Card(
+                    id=card.id,
+                    question=card.question,
+                    answer=card.answer,
+                    creation_date=card.creation_date,
+                ))
+
+            return cards_list
 
         except Exception as error:
             raise DatabaseQueryFailed(error)

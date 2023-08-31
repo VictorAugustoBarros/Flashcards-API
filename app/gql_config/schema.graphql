@@ -89,9 +89,11 @@ type Deck {
 type Query {
     get_deck (deck_id: Int!): DeckResponse
     get_decks: DeckListResponse
+    get_deck_subdecks (deck_id: Int!): SubDeckListResponse
 
     get_subdeck(subdeck_id: Int!): SubDeckResponse
     get_subdecks: SubDeckListResponse
+    get_subdeck_cards (subdeck_id: Int!): CardListResponse
 
     get_card (card_id: Int!): CardResponse
     get_cards: CardListResponse

@@ -11,8 +11,11 @@ from app.routers.status import status_router
 from app.services.sentry import Sentry
 
 
+# TODO -> Arrumar o noise supression do mic
 # Frontend
-# TODO -> Continuar no web design da aplicação
+# TODO -> Finalizar o design da tela de Cards
+# TODO -> Ajustar o component Card e suas ações de editar/excluir
+# TODO -> Adicionar os componentes no Storybook
 
 # Backend
 # TODO -> Finalizar os Updates/Deletes (Mutations)

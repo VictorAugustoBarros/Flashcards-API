@@ -12,6 +12,7 @@ from app.services.sentry import Sentry
 
 
 # Frontend
+# TODO -> Emitir um evento para o componente para para fechar o modal pelo botao "Cancelar" do Card
 # TODO -> Finalizar o design da tela de Cards
 # TODO -> Implementar logica de delete / edit dos Cards
 

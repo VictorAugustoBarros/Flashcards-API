@@ -13,13 +13,15 @@ from app.services.sentry import Sentry
 
 # Frontend
 # TODO -> Finalizar o design da tela de Cards
-# TODO -> Ajustar o component Card e suas ações de editar/excluir
-# TODO -> Adicionar os componentes no Storybook
+# TODO -> Implementar logica de delete / edit dos Cards
 
 # Backend
 # TODO -> Finalizar os Updates/Deletes (Mutations)
 # TODO -> Arrumar as docstring (mypy)
 # TODO -> Aplicar o Nuxt no projeto (estudar)
+
+# Outros
+# TODO -> Adicionar pre-commit no projeto https://pre-commit.com/
 
 
 class CreateApp:

@@ -8,5 +8,5 @@ from app.models.responses.response import Response
 class UserLoginResponse:
     """Modelo de resposta do UserLogin."""
 
-    jwt_token: str = None
+    jwt_token: str = ""
     response: Response = None

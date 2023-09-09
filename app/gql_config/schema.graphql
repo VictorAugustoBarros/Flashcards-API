@@ -112,6 +112,9 @@ type Query {
 # Mutation
 type Mutation {
     add_card(subdeck_id: Int!, question: String!, answer: String!): CardResponse!
+    edit_card(card_id: Int!, question: String!, answer: String!): Response!
+    delete_card(card_id: Int!): Response!
+
     add_deck(name: String!, description: String!) : DeckResponse!
     add_user(email: String!, username: String!, password: String!): UserResponse!
     add_subdeck(deck_id: Int!, name: String!, description: String!): SubDeckResponse!

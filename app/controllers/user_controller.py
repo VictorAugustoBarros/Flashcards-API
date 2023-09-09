@@ -1,12 +1,11 @@
 """Card Controller."""
 from datetime import datetime
-from typing import Any, List, Optional, Tuple, Union
+from typing import List, Optional
 
 from sqlalchemy import or_
 
 from app.connections.mysql.models.mysql_user import MySQLUser
 from app.models.users.user import User
-from app.services.jwt_manager import JwtManager
 from app.utils.errors import (DatabaseDeleteFailed, DatabaseInsertFailed,
                               DatabaseQueryFailed)
 

@@ -2,12 +2,14 @@
 from datetime import datetime
 from typing import List, Optional
 
+from sqlalchemy import and_, join
 from sqlalchemy.orm import joinedload
 
-from app.connections.mysql import MySQLSubDeck
+from app.connections.mysql import MySQLSubDeck, MySQLDeck, MySQLUser
 from app.connections.mysql.models.mysql_card import MySQLCard
+from app.connections.mysql.models.mysql_user_deck import MySQLUserDeck
 from app.models.cards.card import Card
-from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed
+from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed, DatabaseUpdateFailed
 
 
 class CardController:
@@ -47,18 +49,29 @@ class CardController:
     def delete_card(self, card_id: int) -> bool:
         try:
             with self.database.session() as session:
-                existing_card = (
-                    session.query(MySQLCard).filter(MySQLCard.id == card_id).first()
-                )
-                if not existing_card:
-                    raise DatabaseInsertFailed("Card não existe!")
-
-                session.delete(existing_card)
+                session.query(MySQLCard).filter(MySQLCard.id == card_id).delete()
                 session.commit()
+
             return True
 
         except Exception as error:
             raise DatabaseInsertFailed(error)
+
+    def update_card(self, card_id: int, question: str, answer: str) -> bool:
+        try:
+            with self.database.session() as session:
+                card = session.query(MySQLCard).filter(MySQLCard.id == card_id).first()
+                if not card:
+                    return False
+
+                card.question = question
+                card.answer = answer
+                session.commit()
+
+            return True
+
+        except Exception as error:
+            raise DatabaseUpdateFailed(error)
 
     def get_all_cards(self) -> List[Card]:
         """Busca de todos os Cards cadastrados.
@@ -141,6 +154,30 @@ class CardController:
                 ))
 
             return cards_list
+
+        except Exception as error:
+            raise DatabaseQueryFailed(error)
+
+    def is_card_user(self, card_id: int, user_id: int):
+        try:
+            with self.database.session() as session:
+                result = (
+                    session.query(MySQLCard)
+                    .join(MySQLSubDeck)
+                    .join(MySQLDeck)
+                    .join(MySQLUserDeck)
+                    .filter(
+                        and_(
+                            MySQLUserDeck.user_id == user_id,
+                            MySQLCard.id == card_id
+                        )
+                    )
+                    .first()
+                )
+            if not result:
+                return False
+
+            return True
 
         except Exception as error:
             raise DatabaseQueryFailed(error)

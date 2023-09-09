@@ -7,6 +7,11 @@ class DatabaseInsertFailed(Exception):
     def __init__(self, _):
         capture_exception(self)
 
+class DatabaseUpdateFailed(Exception):
+    """Exceção para falhas de atualização no banco de dados."""
+
+    def __init__(self, _):
+        capture_exception(self)
 
 class DatabaseDeleteFailed(Exception):
     """Exceção para falhas de deleção no banco de dados."""

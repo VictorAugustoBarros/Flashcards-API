@@ -12,8 +12,8 @@ from app.services.sentry import Sentry
 
 
 # Frontend
-# TODO -> Finalizar o design da tela de Cards
-# TODO -> Implementar logica de delete / edit dos Cards
+# TODO -> Continuar a tela de Decks criando um "Card" para cada Deck
+# TODO -> Popular os graficos da dashboard com valores do banco
 
 # Backend
 # TODO -> Finalizar os Updates/Deletes (Mutations)
@@ -21,6 +21,7 @@ from app.services.sentry import Sentry
 # TODO -> Aplicar o Nuxt no projeto (estudar)
 
 # Outros
+# TODO -> Responsividade
 # TODO -> Adicionar pre-commit no projeto https://pre-commit.com/
 
 

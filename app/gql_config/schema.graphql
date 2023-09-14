@@ -116,6 +116,9 @@ type Mutation {
     delete_card(card_id: Int!): Response!
 
     add_deck(name: String!, description: String!) : DeckResponse!
+    edit_deck(deck_id: Int!, name: String!, description: String!): Response!
+    delete_deck(deck_id: Int!): Response!
+
     add_user(email: String!, username: String!, password: String!): UserResponse!
     add_subdeck(deck_id: Int!, name: String!, description: String!): SubDeckResponse!
 

@@ -12,7 +12,10 @@ from app.services.sentry import Sentry
 
 
 # Frontend
-# TODO -> Continuar a tela de Decks criando um "Card" para cada Deck
+# TODO -> Alterar o Expander criação DECK/SUBDECK
+# TODO -> Espaçamento entre os items do Deck
+# TODO -> Emitir eventos ao criar novo Deck/SubDeck
+# TODO -> Pensar no design do updater/delete dos Decks/Subdecks (Div da direita)
 # TODO -> Popular os graficos da dashboard com valores do banco
 
 # Backend

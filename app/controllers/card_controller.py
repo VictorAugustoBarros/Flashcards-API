@@ -2,14 +2,14 @@
 from datetime import datetime
 from typing import List, Optional
 
-from sqlalchemy import and_, join
-from sqlalchemy.orm import joinedload
+from sqlalchemy import and_
 
-from app.connections.mysql import MySQLSubDeck, MySQLDeck, MySQLUser
-from app.connections.mysql.models.mysql_card import MySQLCard
-from app.connections.mysql.models.mysql_user_deck import MySQLUserDeck
-from app.models.cards.card import Card
-from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed, DatabaseUpdateFailed
+from app.graphql_config.cards import Card
+from app.utils.errors import (
+    DatabaseInsertFailed,
+    DatabaseQueryFailed,
+    DatabaseUpdateFailed,
+)
 
 
 class CardController:
@@ -81,7 +81,6 @@ class CardController:
         """
         try:
             with self.database.session() as session:
-
                 cards = session.query(MySQLCard).all()
 
                 all_cards = []
@@ -146,12 +145,14 @@ class CardController:
 
             cards_list = []
             for card in cards:
-                cards_list.append(Card(
-                    id=card.id,
-                    question=card.question,
-                    answer=card.answer,
-                    creation_date=card.creation_date,
-                ))
+                cards_list.append(
+                    Card(
+                        id=card.id,
+                        question=card.question,
+                        answer=card.answer,
+                        creation_date=card.creation_date,
+                    )
+                )
 
             return cards_list
 
@@ -167,10 +168,7 @@ class CardController:
                     .join(MySQLDeck)
                     .join(MySQLUserDeck)
                     .filter(
-                        and_(
-                            MySQLUserDeck.user_id == user_id,
-                            MySQLCard.id == card_id
-                        )
+                        and_(MySQLUserDeck.user_id == user_id, MySQLCard.id == card_id)
                     )
                     .first()
                 )

@@ -5,16 +5,13 @@ from ariadne.asgi import GraphQL
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.gql_config.graphql_error import graphql_format_error
-from app.models.schema_importer import graphql_schema
+from app.graphql_config.graphql_error import graphql_format_error
+from app.graphql_config.schema_importer import graphql_schema
 from app.routers.status import status_router
-from app.services.sentry import Sentry
+from app.sentry import Sentry
 
 
 # Frontend
-# TODO -> Alterar o Expander criação DECK/SUBDECK
-# TODO -> Espaçamento entre os items do Deck
-# TODO -> Emitir eventos ao criar novo Deck/SubDeck
 # TODO -> Pensar no design do updater/delete dos Decks/Subdecks (Div da direita)
 # TODO -> Popular os graficos da dashboard com valores do banco
 
@@ -26,6 +23,7 @@ from app.services.sentry import Sentry
 # Outros
 # TODO -> Responsividade
 # TODO -> Adicionar pre-commit no projeto https://pre-commit.com/
+# TODO -> Validar a segurança nas requests (Jwt, permissões, ...)
 
 
 class CreateApp:
@@ -36,7 +34,7 @@ class CreateApp:
         self.app = FastAPI()
         self.app.add_middleware(
             CORSMiddleware,
-            allow_origins=["http://localhost:3000"],
+            allow_origins=["http://localhost:3000", "http://localhost:6006"],
             allow_credentials=True,
             allow_methods=["*"],
             allow_headers=["*"],

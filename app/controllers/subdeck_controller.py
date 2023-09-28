@@ -4,12 +4,13 @@ from typing import List, Optional
 
 from sqlalchemy.orm import joinedload
 
-from app.connections.dependencies import Dependencies
-from app.connections.mysql.models.mysql_subdeck import MySQLSubDeck
-from app.models.cards.card import Card
-from app.models.subdecks.subdeck import SubDeck
-from app.utils.errors import (DatabaseDeleteFailed, DatabaseInsertFailed,
-                              DatabaseQueryFailed)
+from app.graphql_config.cards import Card
+from app.models.subdeck import SubDeck
+from app.utils.errors import (
+    DatabaseDeleteFailed,
+    DatabaseInsertFailed,
+    DatabaseQueryFailed,
+)
 
 
 class SubDeckController:

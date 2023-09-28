@@ -1,10 +1,8 @@
 from unittest import TestCase
 from unittest.mock import Mock
 
-from app.connections.dependencies import Dependencies
-from app.connections.mysql import MySQLUser
-from app.controllers.user_controller import UserController
-from app.models.users.user import User
+
+from app.models.user import User
 from app.utils.errors import (
     DatabaseInsertFailed,
     DatabaseQueryFailed,

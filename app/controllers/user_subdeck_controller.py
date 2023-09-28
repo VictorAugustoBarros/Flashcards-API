@@ -3,9 +3,8 @@ from typing import List
 
 from sqlalchemy import and_
 
-from app.connections.mysql.models.mysql_user_subdeck import MySQLUserSubDeck
 from app.controllers.subdeck_controller import SubDeckController
-from app.models.subdecks.subdeck import SubDeck
+from app.models.subdeck import SubDeck
 from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed
 
 
@@ -35,7 +34,6 @@ class UserSubDeckController:
     def validate_link_userdeck_exists(self, user_id: int, subdeck_id: int) -> bool:
         try:
             with self.database.session() as session:
-
                 existing_usersubdeck = (
                     session.query(MySQLUserSubDeck)
                     .filter(
@@ -63,7 +61,6 @@ class UserSubDeckController:
         """
         try:
             with self.database.session() as session:
-
                 user_subdecks = (
                     session.query(MySQLUserSubDeck)
                     .filter(MySQLUserSubDeck.user_id == user_id)

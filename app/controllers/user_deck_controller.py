@@ -1,17 +1,17 @@
-
 """User Deck Controller."""
 from datetime import datetime
 from typing import List
 
 from sqlalchemy import and_
 
-from app.connections.dependencies import Dependencies
-from app.connections.mysql.models.mysql_user_deck import MySQLUserDeck
 from app.controllers.deck_controller import DeckController
-from app.models.decks.deck import Deck
-from app.models.user_deck.user_deck import UserDeck
-from app.utils.errors import (DatabaseDeleteFailed, DatabaseInsertFailed,
-                              DatabaseQueryFailed)
+from app.models.deck import Deck
+from app.models.user_deck import UserDeck
+from app.utils.errors import (
+    DatabaseDeleteFailed,
+    DatabaseInsertFailed,
+    DatabaseQueryFailed,
+)
 
 
 class UserDeckController:
@@ -81,7 +81,6 @@ class UserDeckController:
     def validate_link_userdeck_exists(self, user_id: int, deck_id: int) -> bool:
         try:
             with self.database.session() as session:
-
                 existing_userdeck = (
                     session.query(MySQLUserDeck)
                     .filter(

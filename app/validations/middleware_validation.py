@@ -1,8 +1,4 @@
-from ariadne import format_error
-
-from app.models.responses.response import Response
-from app.services.jwt_manager import JwtManager
-from app.utils.errors import InvalidToken
+from app.jwt_manager import JwtManager
 
 
 def validate_token(func):

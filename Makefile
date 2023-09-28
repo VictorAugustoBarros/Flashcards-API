@@ -1,5 +1,5 @@
 black:
-	black app/ tests/
+	black .
 
 pylint:
 	pylint app/

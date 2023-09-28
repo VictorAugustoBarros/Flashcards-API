@@ -2,13 +2,10 @@ from datetime import datetime
 from unittest import TestCase
 from unittest.mock import Mock
 
-from app.connections.dependencies import Dependencies
-from app.connections.mysql import MySQLUserDeck, MySQLDeck
 from app.controllers.deck_controller import DeckController
-from app.controllers.user_controller import UserController
 from app.controllers.user_deck_controller import UserDeckController
-from app.models.decks.deck import Deck
-from app.models.users.user import User
+from app.models.deck import Deck
+from app.models.user import User
 from app.utils.errors import (
     DatabaseInsertFailed,
     DatabaseQueryFailed,

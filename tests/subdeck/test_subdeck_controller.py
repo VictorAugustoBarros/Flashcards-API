@@ -6,8 +6,8 @@ from app.connections.dependencies import Dependencies
 from app.connections.mysql import MySQLSubDeck, MySQLCard
 from app.controllers.deck_controller import DeckController
 from app.controllers.subdeck_controller import SubDeckController
-from app.models.decks.deck import Deck
-from app.models.subdecks.subdeck import SubDeck
+from app.models.deck import Deck
+from app.models.subdeck import SubDeck
 from app.utils.errors import (
     DatabaseInsertFailed,
     DatabaseDeleteFailed,

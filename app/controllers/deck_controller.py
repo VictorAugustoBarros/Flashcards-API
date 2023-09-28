@@ -3,16 +3,16 @@
 from datetime import datetime
 from typing import List, Optional
 
-from sqlalchemy.orm import Session, joinedload
+from sqlalchemy.orm import joinedload
 
-from app.connections.dependencies import Dependencies
-from app.connections.mysql.models.mysql_deck import MySQLDeck
-from app.connections.mysql.models.mysql_subdeck import MySQLSubDeck
-from app.models.cards.card import Card
-from app.models.decks.deck import Deck
-from app.models.subdecks.subdeck import SubDeck
-from app.utils.errors import (DatabaseDeleteFailed, DatabaseInsertFailed,
-                              DatabaseQueryFailed)
+from app.models.card import Card
+from app.models.deck import Deck
+from app.models.subdeck import SubDeck
+from app.utils.errors import (
+    DatabaseDeleteFailed,
+    DatabaseInsertFailed,
+    DatabaseQueryFailed,
+)
 
 
 class DeckController:
@@ -194,19 +194,21 @@ class DeckController:
 
             subdecks_list = []
             for subdeck in subdecks:
-                subdecks_list.append(SubDeck(
-                    id=subdeck.id,
-                    name=subdeck.name,
-                    description=subdeck.description,
-                    creation_date=subdeck.creation_date
-                ))
+                subdecks_list.append(
+                    SubDeck(
+                        id=subdeck.id,
+                        name=subdeck.name,
+                        description=subdeck.description,
+                        creation_date=subdeck.creation_date,
+                    )
+                )
 
             return subdecks_list
         except Exception as error:
             raise DatabaseQueryFailed(error)
 
     @staticmethod
-    def map_subdecks_and_cards(subdecks: List[MySQLSubDeck]) -> List[SubDeck]:
+    def map_subdecks_and_cards(subdecks) -> List[SubDeck]:
         """Map MySQLSubDeck objects to SubDeck objects with associated Cards.
 
         Args:

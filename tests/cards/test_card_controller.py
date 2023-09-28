@@ -3,9 +3,9 @@ from unittest.mock import Mock
 from app.controllers.card_controller import CardController
 from app.controllers.subdeck_controller import SubDeckController
 from app.controllers.deck_controller import DeckController
-from app.models.cards.card import Card
-from app.models.decks.deck import Deck
-from app.models.subdecks.subdeck import SubDeck
+from app.graphql_config.cards import Card
+from app.models.deck import Deck
+from app.models.subdeck import SubDeck
 from app.connections.dependencies import Dependencies
 from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed
 

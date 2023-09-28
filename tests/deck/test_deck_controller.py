@@ -1,12 +1,12 @@
 from datetime import datetime
 from unittest import TestCase
-from unittest.mock import Mock, MagicMock
+from unittest.mock import Mock
 
 from app.connections.dependencies import Dependencies
 from app.connections.mysql import MySQLDeck, MySQLSubDeck, MySQLCard
 from app.controllers.deck_controller import DeckController
-from app.models.decks.deck import Deck
-from app.models.subdecks.subdeck import SubDeck
+from app.models.deck import Deck
+from app.models.subdeck import SubDeck
 from app.utils.errors import (
     DatabaseInsertFailed,
     DatabaseDeleteFailed,

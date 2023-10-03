@@ -37,8 +37,17 @@ class UserService:
 
         return True
 
-    def delete_user(self, user: User):
-        self.user_repository.remove(entity=UserEntity, document_id=user.id)
+    def update_user(self, user: User):
+        self.user_repository.update(entity=UserEntity, document_id=user.id, document={
+            "username": user.username,
+            "email": user.email,
+            "password": user.password
+        })
+        return True
+
+    def delete_user(self, user_id: int) -> bool:
+        self.user_repository.remove(entity=UserEntity, document_id=user_id)
+        return True
 
     def validate_username(self, username: str) -> bool:
         return self.user_repository.validate_username(username=username)

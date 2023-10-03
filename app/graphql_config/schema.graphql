@@ -120,6 +120,9 @@ type Mutation {
     delete_deck(deck_id: Int!): Response!
 
     add_user(email: String!, username: String!, password: String!): Response!
+    edit_user(email: String!, username: String!, password: String!): Response!
+    delete_user: Response!
+
     add_subdeck(deck_id: Int!, name: String!, description: String!): SubDeckResponse!
 
     link_user_deck(user_id: Int!, deck_id: Int!): Response!

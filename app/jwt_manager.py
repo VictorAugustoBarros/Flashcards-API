@@ -11,7 +11,7 @@ class JwtManager:
     @staticmethod
     def create_token(user_data: dict):
         """Criando um Token JWT"""
-        user_data.update({"exp": datetime.utcnow() + timedelta(days=1)})
+        user_data.update({"exp": datetime.utcnow() + timedelta(days=30)})
         return jwt.encode(user_data, jwt_secret_key, algorithm="HS256")
 
     @staticmethod

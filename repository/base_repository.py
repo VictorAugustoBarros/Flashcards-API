@@ -7,10 +7,12 @@ class BaseRepository:
         self.session.commit()
 
     def remove(self, entity, document_id: int):
-        self.session.delete(entity).filter(entity.id == document_id).first()
+        self.session.query(entity).filter(entity.id == document_id).delete()
+        self.session.commit()
 
     def update(self, entity, document_id: int, document: dict):
         self.session.query(entity).filter(entity.id == document_id).update(document)
+        self.session.commit()
 
     def get_by_id(self, entity, document_id: int):
         return self.session.query(entity).filter(entity.id == document_id).first()

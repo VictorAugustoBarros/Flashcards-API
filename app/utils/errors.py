@@ -29,3 +29,13 @@ class InvalidToken(Exception):
 class ExpiredToken(Exception):
     def __str__(self):
         return "Token Expirado!"
+
+
+class UsernameAlreadyTaken(Exception):
+    def __str__(self):
+        return "Username já existe!"
+
+
+class EmailAlreadyTaken(Exception):
+    def __str__(self):
+        return "Email já existe!"

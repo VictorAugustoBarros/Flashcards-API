@@ -12,10 +12,10 @@ from app.utils.errors import (
 )
 from app.validations.middleware_validation import validate_token
 
-card_mutation = MutationType()
+card_mutations = MutationType()
 
 
-@card_mutation.field("add_card")
+@card_mutations.field("add_card")
 def resolve_add_card(
     _, info, subdeck_id: int, question: str, answer: str
 ) -> CardResponse:
@@ -59,7 +59,7 @@ def resolve_add_card(
         raise error
 
 
-@card_mutation.field("edit_card")
+@card_mutations.field("edit_card")
 @validate_token
 def resolve_edit_card(
     _, info, card_id: int, question: str, answer: str, token: dict
@@ -102,7 +102,7 @@ def resolve_edit_card(
         raise error
 
 
-@card_mutation.field("delete_card")
+@card_mutations.field("delete_card")
 @validate_token
 def resolve_delete_card(_, info, card_id: int, token: dict) -> Response:
     """Inserção de um novo Card

@@ -13,9 +13,9 @@ class SubDeckEntity(mysql_base):
     id = Column(Integer, primary_key=True)
     name = Column(String(255))
     description = Column(String(255))
-    deck_id = Column(Integer, ForeignKey("decks.id"))  # Chave estrangeira para decks
     creation_date = Column(DateTime)
+    deck_id = Column(Integer, ForeignKey("decks.id"))
 
-    deck = relationship("DeckEntity", back_populates="subdecks")
-    cards = relationship("CardEntity", back_populates="subdecks")
-    subdeck_user = relationship("UserSubDeckEntity", back_populates="subdeck")
+    deck = relationship("DeckEntity", back_populates="subdeck")
+    card = relationship("CardEntity", back_populates="subdeck")
+    review = relationship("SubDeckReviewEntity", back_populates="subdeck")

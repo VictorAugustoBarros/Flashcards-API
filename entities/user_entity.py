@@ -16,5 +16,4 @@ class UserEntity(mysql_base):
     password = Column(String(255))
     creation_date = Column(DateTime)
 
-    deck_user = relationship("UserDeckEntity", back_populates="user")
-    subdeck_user = relationship("UserSubDeckEntity", back_populates="user")
+    deck = relationship("DeckEntity", back_populates="user")

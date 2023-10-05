@@ -1,5 +1,5 @@
 """MySQL Deck model."""
-from sqlalchemy import Column, DateTime, Integer, String
+from sqlalchemy import Column, DateTime, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
 
 from entities.base_entity import mysql_base
@@ -13,7 +13,9 @@ class DeckEntity(mysql_base):
     id = Column(Integer, primary_key=True)
     name = Column(String(255))
     description = Column(String(255))
+    user_id = Column(Integer, ForeignKey("users.id"))
     creation_date = Column(DateTime)
 
-    subdecks = relationship("SubDeckEntity", back_populates="deck")
-    deck_user = relationship("UserDeckEntity", back_populates="deck")
+    subdeck = relationship("SubDeckEntity", back_populates="deck")
+    user = relationship("UserEntity", back_populates="deck")
+    review = relationship("SubDeckReviewEntity", back_populates="deck")

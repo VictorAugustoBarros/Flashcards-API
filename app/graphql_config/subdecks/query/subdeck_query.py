@@ -5,7 +5,10 @@ from ariadne import QueryType
 
 from app.graphql_config.models.card_response import CardListResponse
 from app.graphql_config.models.response import Response
-from app.graphql_config.models.subdeck_response import SubDeckListResponse, SubDeckResponse
+from app.graphql_config.models.subdeck_response import (
+    SubDeckListResponse,
+    SubDeckResponse,
+)
 from app.utils.errors import DatabaseQueryFailed, TokenError
 from app.validations.middleware_validation import validate_token
 

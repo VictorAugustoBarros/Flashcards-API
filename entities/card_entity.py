@@ -1,5 +1,5 @@
 """MySQL User SubDeck model."""
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, Boolean
 from sqlalchemy.orm import relationship
 
 from entities.base_entity import mysql_base
@@ -13,7 +13,13 @@ class CardEntity(mysql_base):
     id = Column(Integer, primary_key=True)
     question = Column(String(255))
     answer = Column(String(255))
-    subdeck_id = Column(Integer, ForeignKey("subdecks.id"))
+    revised = Column(Boolean(False))
+    revision_date = Column(DateTime)
     creation_date = Column(DateTime)
+    subdeck_id = Column(Integer, ForeignKey("subdecks.id"))
+    review_difficulties_id = Column(Integer, ForeignKey("review_difficulties.id"))
 
-    subdecks = relationship("SubDeckEntity", back_populates="cards")
+    subdeck = relationship("SubDeckEntity", back_populates="card")
+    review_difficulties = relationship(
+        "ReviewDifficultiesEntity", back_populates="card"
+    )

@@ -1,6 +1,7 @@
 from typing import Optional
 
 from app.jwt_manager import JwtManager
+from app.utils.errors import UsernameAlreadyTaken, EmailAlreadyTaken
 from entities.user_entity import UserEntity
 from app.models.user import User
 from repository.user_repository import UserRepository
@@ -20,17 +21,17 @@ class UserService:
             username=user.username,
             email=user.email,
             password=user.password,
-            creation_date=user.creation_date
+            creation_date=user.creation_date,
         )
 
     def create_user(self, user: User) -> bool:
         username_exists = self.user_repository.validate_username(username=user.username)
         if username_exists:
-            return False
+            raise UsernameAlreadyTaken()
 
         email_exists = self.user_repository.validate_email(email=user.email)
         if email_exists:
-            return False
+            raise EmailAlreadyTaken()
 
         user_entity = UserEntity(**user.__dict__)
         self.user_repository.add(entity=user_entity)
@@ -38,11 +39,15 @@ class UserService:
         return True
 
     def update_user(self, user: User):
-        self.user_repository.update(entity=UserEntity, document_id=user.id, document={
-            "username": user.username,
-            "email": user.email,
-            "password": user.password
-        })
+        self.user_repository.update(
+            entity=UserEntity,
+            document_id=user.id,
+            document={
+                "username": user.username,
+                "email": user.email,
+                "password": user.password,
+            },
+        )
         return True
 
     def delete_user(self, user_id: int) -> bool:
@@ -51,13 +56,6 @@ class UserService:
 
     def validate_username(self, username: str) -> bool:
         return self.user_repository.validate_username(username=username)
-
-    def validate_user(self, user: User):
-        user_exists = self.user_repository.validate_user(user_id=user.id)
-        if not user_exists:
-            return False
-
-        return True
 
     def login(self, email: str, password: str):
         user = self.user_repository.login(email=email, password=password)

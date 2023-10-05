@@ -1,7 +1,6 @@
 type Response {
     success: Boolean!
     message: String
-    error: String
 }
 
 type UserResponse {

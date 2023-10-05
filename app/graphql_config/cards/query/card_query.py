@@ -26,7 +26,9 @@ def resolve_get_card(*_, card_id: int) -> CardResponse:
         card_service = CardService(session=MySQLDB().session)
         card = card_service.get_card(card_id=card_id)
         if not card:
-            return CardResponse(response=Response(success=False, message="Card não encontrado!"))
+            return CardResponse(
+                response=Response(success=False, message="Card não encontrado!")
+            )
 
         return CardResponse(card=card, response=Response(success=True))
 

@@ -10,10 +10,10 @@ from app.graphql_config.models.response import Response
 from app.utils.errors import DatabaseInsertFailed, TokenError
 from app.validations.middleware_validation import validate_token
 
-deck_mutation = MutationType()
+deck_mutations = MutationType()
 
 
-@deck_mutation.field("add_deck")
+@deck_mutations.field("add_deck")
 @validate_token
 def resolve_add_deck(_, info, name: str, description: str, token: dict) -> DeckResponse:
     """Inserção de um novo Deck

@@ -6,10 +6,10 @@ from app.graphql_config.models.subdeck_response import SubDeckResponse
 from app.models.subdeck import SubDeck
 from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed
 
-subdeck_mutation = MutationType()
+subdeck_mutations = MutationType()
 
 
-@subdeck_mutation.field("add_subdeck")
+@subdeck_mutations.field("add_subdeck")
 def resolve_add_subdeck(
     _, info, deck_id: int, name: str, description: str
 ) -> SubDeckResponse:

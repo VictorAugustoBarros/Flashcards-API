@@ -1,16 +1,8 @@
 """Deck Repository."""
-from repository.base_repository import AbstractRepository
+from repository.base_repository import BaseRepository
 
 
-class DeckRepository(AbstractRepository):
-    def add(self):
-        print("deck add...")
-        ...
-
-    def remove(self):
-        print("deck remove...")
-        ...
-
-    def update(self):
-        print("deck update...")
-        ...
+class DeckRepository(BaseRepository):
+    def __init__(self, session):
+        super().__init__(session)
+        self.session = session()

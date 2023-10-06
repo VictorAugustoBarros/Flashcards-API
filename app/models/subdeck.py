@@ -12,6 +12,7 @@ class SubDeck:
 
     name: str
     description: str
-    cards: List[Card] = field(default_factory=list)
+    id: int = None
     creation_date: datetime = None
-    id: int = None  # pylint: disable=C0103
+    deck_id: int = None
+    cards: List[Card] = field(default_factory=list)

@@ -80,7 +80,7 @@ type Deck {
     id: Int
     name: String!
     description: String
-    sub_deck: [SubDeck]
+    subdecks: [SubDeck]
     creation_date: String
 }
 
@@ -123,6 +123,8 @@ type Mutation {
     delete_user: Response!
 
     add_subdeck(deck_id: Int!, name: String!, description: String!): SubDeckResponse!
+    edit_subdeck(subdeck_id: Int!, name: String!, description: String!): Response!
+    delete_subdeck(subdeck_id: Int!): Response!
 
     link_user_deck(user_id: Int!, deck_id: Int!): Response!
     link_user_subdeck(user_id: Int!, subdeck_id: Int!): Response!

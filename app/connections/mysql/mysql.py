@@ -30,5 +30,6 @@ class MySQLDB:
         engine = create_engine(
             f"mysql+pymysql://{mysql_user}:{mysql_password}@{mysql_host}:{mysql_port}/{mysql_database}"
         )
+        # mysql_base.metadata.drop_all(engine)
         mysql_base.metadata.create_all(engine)
         self.session = sessionmaker(bind=engine)

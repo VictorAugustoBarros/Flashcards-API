@@ -1,6 +1,5 @@
 """Card Query GraphQL."""
-from typing import List
-
+import sentry_sdk
 from ariadne import QueryType
 
 from app.connections.mysql import MySQLDB
@@ -30,14 +29,16 @@ def resolve_get_deck(*_, deck_id: int, token: dict) -> DeckResponse:
     try:
         if not token["valid"]:
             raise TokenError(token["error"])
+        user_info = token["user_info"]
 
         deck_service = DeckService(session=MySQLDB().session)
-        deck = deck_service.get_deck(deck_id=deck_id)
-        if not deck:
+        deck_user = deck_service.validate_deck_user(user_id=user_info["id"], deck_id=deck_id)
+        if not deck_user:
             return DeckResponse(
                 response=Response(success=False, message="Deck não encontrado!")
             )
 
+        deck = deck_service.get_deck(deck_id=deck_id)
         return DeckResponse(deck=deck, response=Response(success=True))
 
     except DatabaseQueryFailed:
@@ -47,61 +48,6 @@ def resolve_get_deck(*_, deck_id: int, token: dict) -> DeckResponse:
 
     except TokenError as error:
         return DeckResponse(response=Response(success=False, message=str(error)))
-
-    except Exception as error:
-        raise error
-
-
-@deck_query.field("get_decks")
-def resolve_get_decks(*_) -> DeckListResponse:
-    """Busca de todos os Decks cadastrados
-
-    Args:
-        *_:
-
-    Returns:
-        List[Deck]: Lista com os Decks cadastrados
-    """
-    try:
-        decks = deck_controller.get_all_decks()
-        return DeckListResponse(decks=decks, response=Response(success=True))
-
-    except DatabaseQueryFailed:
-        return DeckListResponse(
-            response=Response(success=False, error="Falha ao buscar Decks")
-        )
-
-    except Exception as error:
-        raise error
-
-
-@deck_query.field("get_deck_subdecks")
-@validate_token
-def resolve_get_deck_subdecks(*_, deck_id: int, token: dict) -> SubDeckListResponse:
-    """Busca de todos os Decks cadastrados
-
-    Args:
-        *_:
-        deck_id(int): Deck ID
-        token(dict): Validação do Token
-
-    Returns:
-        List[Deck]: Lista com os Decks cadastrados
-    """
-    try:
-        if not token["valid"]:
-            raise TokenError(token["error"])
-
-        subdecks = deck_controller.get_deck_subdecks(deck_id=deck_id)
-        return SubDeckListResponse(subdecks=subdecks, response=Response(success=True))
-
-    except DatabaseQueryFailed:
-        return SubDeckListResponse(
-            response=Response(success=False, error="Falha ao buscar SubDecks")
-        )
-
-    except TokenError as error:
-        return SubDeckListResponse(response=Response(success=False, error=str(error)))
 
     except Exception as error:
         raise error

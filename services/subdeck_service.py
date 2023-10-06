@@ -1,31 +1,46 @@
-from app.models.card import Card
-from repository.card_repository import CardRepository
-from entities.card_entity import CardEntity
+from app.models.subdeck import SubDeck
+from repository.subdeck_repository import SubDeckRepository
+from entities.subdeck_entity import SubDeckEntity
+from services.base_service import BaseService
 
 
-class CardService:
+class SubdeckService(BaseService):
     def __init__(self, session):
-        self.card_repository = CardRepository(session=session)
+        self.subdeck_repository = SubDeckRepository(session=session)
 
-    def create_card(self, card: Card):
-        self.card_repository.add(entity=CardEntity)
+    def create_subdeck(self, subdeck: SubDeck):
+        subdeck_inserted = self.subdeck_repository.add(entity=SubDeckEntity(**subdeck.__dict__))
+        subdeck.id = subdeck_inserted.id
+        subdeck.creation_date = subdeck_inserted.creation_date
+        return subdeck
 
-    def delete_card(self, card_id: int):
-        self.card_repository.remove(entity=CardEntity, document_id=card_id)
+    def delete_subdeck(self, subdeck_id: int):
+        self.subdeck_repository.remove(entity=SubDeckEntity, document_id=subdeck_id)
+        return True
 
-    def update_card(self, card_id: int, card: Card):
-        self.card_repository.update(
-            entity=CardEntity, document_id=card_id, document=card.__dict__
+    def update_subdeck(self, subdeck_id: int, subdeck: SubDeck):
+        self.subdeck_repository.update(
+            entity=SubDeckEntity, document_id=subdeck_id,
+            document={key: value.strip() for key, value in subdeck.__dict__.items() if value}
         )
+        return True
 
-    def get_card(self, card_id: int):
-        card = self.card_repository.get_by_id(entity=CardEntity, document_id=card_id)
-        if not card:
+    def validate_subdeck_user(self, user_id: int, subdeck_id: int) -> bool:
+        return self.subdeck_repository.validate_subdeck(user_id=user_id, subdeck_id=subdeck_id)
+
+    def get_subdeck(self, subdeck_id: int):
+        subdeck = self.subdeck_repository.get_by_id(entity=SubDeckEntity, document_id=subdeck_id)
+        if not subdeck:
             return None
 
-        return Card(
-            id=card.id,
-            question=card.question,
-            answer=card.answer,
-            creation_date=card.creation_date,
+        subdeck_cards = []
+        if cards := subdeck.cards:
+            subdeck_cards = self.get_cards(cards=cards)
+
+        return SubDeck(
+            id=subdeck.id,
+            name=subdeck.name,
+            description=subdeck.description,
+            creation_date=subdeck.creation_date,
+            cards=subdeck_cards
         )

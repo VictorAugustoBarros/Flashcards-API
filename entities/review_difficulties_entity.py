@@ -13,8 +13,6 @@ class ReviewDifficultiesEntity(mysql_base):
     id = Column(Integer, primary_key=True)
     name = Column(String(255))
     description = Column(String(255))
+    minutes = Column(Integer)
 
     card = relationship("CardEntity", back_populates="review_difficulties")
-    review_difficulties_interval_time = relationship(
-        "ReviewDifficultiesIntervalTimeEntity", back_populates="review_difficulties"
-    )

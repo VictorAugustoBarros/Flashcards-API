@@ -22,6 +22,6 @@ graphql_schema = make_executable_schema(
         subdeck_mutations,
         subdeck_query,
         user_mutations,
-        user_query
+        user_query,
     ],
 )

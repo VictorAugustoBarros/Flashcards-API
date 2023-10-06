@@ -40,7 +40,7 @@ def resolve_add_user(_, info, email: str, username: str, password: str) -> Respo
 @user_mutations.field("edit_user")
 @validate_token
 def resolve_edit_user(
-        _, info, email: str, username: str, password: str, token: dict
+    _, info, email: str, username: str, password: str, token: dict
 ) -> Response:
     try:
         if not token["valid"]:

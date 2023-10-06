@@ -12,6 +12,7 @@ class Deck:
 
     name: str
     description: str
-    sub_deck: List[SubDeck] = field(default_factory=list)
     creation_date: datetime = None
-    id: int = None  # pylint: disable=C0103
+    user_id: int = None
+    id: int = None
+    subdecks: List[SubDeck] = field(default_factory=list)

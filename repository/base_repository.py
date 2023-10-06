@@ -5,6 +5,7 @@ class BaseRepository:
     def add(self, entity):
         self.session.add(entity)
         self.session.commit()
+        return entity
 
     def remove(self, entity, document_id: int):
         self.session.query(entity).filter(entity.id == document_id).delete()

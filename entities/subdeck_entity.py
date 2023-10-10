@@ -14,8 +14,8 @@ class SubDeckEntity(mysql_base):
     name = Column(String(255))
     description = Column(String(255))
     creation_date = Column(DateTime(timezone=True), server_default=func.now())
-    deck_id = Column(Integer, ForeignKey("decks.id"))
+    deck_id = Column(Integer, ForeignKey("decks.id"), nullable=False)
 
     deck = relationship("DeckEntity", back_populates="subdeck")
-    cards = relationship("CardEntity", back_populates="subdeck", cascade="all, delete")
+    cards = relationship('CardEntity', cascade='all, delete')
     review = relationship("SubDeckReviewEntity", back_populates="subdeck")

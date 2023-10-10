@@ -16,10 +16,9 @@ class CardEntity(mysql_base):
     revised = Column(Boolean(), default=False)
     revision_date = Column(DateTime)
     creation_date = Column(DateTime(timezone=True), server_default=func.now())
-    subdeck_id = Column(Integer, ForeignKey("subdecks.id"))
+    subdeck_id = Column(Integer, ForeignKey("subdecks.id"), nullable=False)
     review_difficulties_id = Column(Integer, ForeignKey("review_difficulties.id"))
 
-    subdeck = relationship("SubDeckEntity", back_populates="cards", passive_deletes=True)
     review_difficulties = relationship(
         "ReviewDifficultiesEntity", back_populates="card"
     )

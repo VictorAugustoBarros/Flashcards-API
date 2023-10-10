@@ -11,8 +11,8 @@ class SubDeckReviewEntity(mysql_base):
     __tablename__ = "subdeck_review"
 
     id = Column(Integer, primary_key=True)
-    deck_id = Column(Integer, ForeignKey("decks.id"))
-    subdeck_id = Column(Integer, ForeignKey("subdecks.id"))
+    deck_id = Column(Integer, ForeignKey("decks.id"), nullable=False)
+    subdeck_id = Column(Integer, ForeignKey("subdecks.id"), nullable=False)
     creation_date = Column(DateTime(timezone=True), server_default=func.now())
 
     deck = relationship("DeckEntity", back_populates="review")

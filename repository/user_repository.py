@@ -9,10 +9,6 @@ class UserRepository(BaseRepository):
         super().__init__(session)
         self.session = session()
 
-    def delete_user(self, user_id: int):
-        self.session.query(UserEntity).filter(UserEntity.id == user_id).delete()
-        self.session.commit()
-
     def login(self, email: str, password: str):
         user = (
             self.session.query(UserEntity)

@@ -77,7 +77,7 @@ class UserService(BaseService):
 
     # TODO -> Validar a remoção dos registros FK antes de deletar o User
     def delete_user(self, user_id: int) -> bool:
-        self.user_repository.delete_user(user_id=user_id)
+        self.user_repository.remove(entity=UserEntity, document_id=user_id)
         return True
 
     def validate_username(self, username: str) -> bool:

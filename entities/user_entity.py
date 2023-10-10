@@ -16,4 +16,4 @@ class UserEntity(mysql_base):
     password = Column(String(255))
     creation_date = Column(DateTime(timezone=True), server_default=func.now())
 
-    deck = relationship("DeckEntity", back_populates="user")
+    deck = relationship("DeckEntity", back_populates="user", cascade='all, delete')

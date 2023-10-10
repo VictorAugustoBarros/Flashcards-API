@@ -14,9 +14,9 @@ class DeckEntity(mysql_base):
     id = Column(Integer, primary_key=True)
     name = Column(String(255))
     description = Column(String(255))
-    user_id = Column(Integer, ForeignKey("users.id"))
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     creation_date = Column(DateTime(timezone=True), server_default=func.now())
 
-    subdeck = relationship("SubDeckEntity", back_populates="deck")
+    subdeck = relationship("SubDeckEntity", back_populates="deck", cascade='all, delete')
     user = relationship("UserEntity", back_populates="deck")
     review = relationship("SubDeckReviewEntity", back_populates="deck")

@@ -15,23 +15,22 @@ subdeck_mutations = MutationType()
 
 @subdeck_mutations.field("add_subdeck")
 @validate_token
-def resolve_add_subdeck(_, info, deck_id: int, name: str, description: str, token: dict) -> SubDeckResponse:
+def resolve_add_subdeck(
+    _, info, deck_id: int, name: str, description: str, token: dict
+) -> SubDeckResponse:
     try:
         if not token["valid"]:
             raise TokenError(token["error"])
 
         subdeck_service = SubdeckService(session=MySQLDB().session)
         subsubdeck = subdeck_service.create_subdeck(
-            subdeck=SubDeck(
-                deck_id=deck_id,
-                name=name,
-                description=description
-            )
+            subdeck=SubDeck(deck_id=deck_id, name=name, description=description)
         )
         if not subsubdeck:
             return SubDeckResponse(
                 response=Response(
-                    success=False, message="Falha ao criar SubDeck, informações inválidas!"
+                    success=False,
+                    message="Falha ao criar SubDeck, informações inválidas!",
                 )
             )
 
@@ -50,28 +49,30 @@ def resolve_add_subdeck(_, info, deck_id: int, name: str, description: str, toke
 
     except Exception as error:
         sentry_sdk.capture_exception(error)
-        return SubDeckResponse(response=Response(success=True, message="Falha ao remover SubDeck!"))
+        return SubDeckResponse(
+            response=Response(success=True, message="Falha ao remover SubDeck!")
+        )
 
 
 @subdeck_mutations.field("edit_subdeck")
 @validate_token
-def resolve_edit_subdeck(_, info, subdeck_id: int, name: str, description: str, token: dict) -> Response:
+def resolve_edit_subdeck(
+    _, info, subdeck_id: int, name: str, description: str, token: dict
+) -> Response:
     try:
         if not token["valid"]:
             raise TokenError(token["error"])
         user_info = token["user_info"]
 
         subdeck_service = SubdeckService(session=MySQLDB().session)
-        subdeck_user = subdeck_service.validate_subdeck_user(user_id=user_info["id"], subdeck_id=subdeck_id)
+        subdeck_user = subdeck_service.validate_subdeck_user(
+            user_id=user_info["id"], subdeck_id=subdeck_id
+        )
         if not subdeck_user:
             return Response(success=False, message="SubDeck não encontrado!")
 
         subdeck_service.update_subdeck(
-            subdeck_id=subdeck_id,
-            subdeck=SubDeck(
-                name=name,
-                description=description
-            )
+            subdeck_id=subdeck_id, subdeck=SubDeck(name=name, description=description)
         )
         return Response(success=True, message="SubDeck atualizado com sucesso!")
 
@@ -83,6 +84,35 @@ def resolve_edit_subdeck(_, info, subdeck_id: int, name: str, description: str, 
 
     except Exception as error:
         sentry_sdk.capture_exception(error)
+        return Response(success=True, message="Falha ao atualizar SubDeck!")
+
+
+@subdeck_mutations.field("delete_subdeck")
+@validate_token
+def resolve_delete_subdeck(_, info, subdeck_id: int, token: dict) -> Response:
+    try:
+        if not token["valid"]:
+            raise TokenError(token["error"])
+        user_info = token["user_info"]
+
+        subdeck_service = SubdeckService(session=MySQLDB().session)
+        subdeck_user = subdeck_service.validate_subdeck_user(
+            user_id=user_info["id"], subdeck_id=subdeck_id
+        )
+        if not subdeck_user:
+            return Response(success=False, message="SubDeck não encontrado!")
+
+        subdeck_service.delete_subdeck(subdeck_id=subdeck_id)
+
+        return Response(success=True, message="SubDeck removido com sucesso!")
+
+    except DatabaseInsertFailed:
+        return Response(success=False, message="Falha ao removido SubDeck!")
+
+    except TokenError as error:
+        return Response(success=False, message=str(error))
+
+    except Exception as error:
+        raise error
+        sentry_sdk.capture_exception(error)
         return Response(success=True, message="Falha ao remover SubDeck!")
-
-

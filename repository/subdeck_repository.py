@@ -12,7 +12,8 @@ class SubDeckRepository(BaseRepository):
 
     def validate_subdeck(self, user_id: int, subdeck_id: int) -> bool:
         subdeck = (
-            self.session.query(SubDeckEntity).join(DeckEntity)
+            self.session.query(SubDeckEntity)
+            .join(DeckEntity)
             .filter(and_(DeckEntity.user_id == user_id, SubDeckEntity.id == subdeck_id))
             .first()
         )

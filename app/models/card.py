@@ -9,5 +9,6 @@ class Card:
 
     question: str
     answer: str
+    subdeck_id: int = None
     creation_date: datetime = None
     id: int = None  # pylint: disable=C0103

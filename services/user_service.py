@@ -1,15 +1,40 @@
 from typing import Optional
 
 from app.jwt_manager import JwtManager
+from app.models.deck import Deck
 from app.utils.errors import UsernameAlreadyTaken, EmailAlreadyTaken
 from entities.user_entity import UserEntity
 from app.models.user import User
 from repository.user_repository import UserRepository
+from services.base_service import BaseService
 
 
-class UserService:
+class UserService(BaseService):
     def __init__(self, session):
         self.user_repository = UserRepository(session=session)
+
+    def get_user_flashcards(self, user_id: int):
+        decks = self.user_repository.get_by_id(entity=UserEntity,document_id=user_id)
+        if not decks:
+            return None
+
+        user_decks = []
+        for deck in decks.deck:
+            deck_subdecks = []
+            if subdecks := deck.subdeck:
+                deck_subdecks = self.get_subdecks(subdecks=subdecks)
+
+            user_decks.append(
+                Deck(
+                    id=deck.id,
+                    name=deck.name,
+                    description=deck.description,
+                    creation_date=deck.creation_date,
+                    user_id=deck.user_id,
+                    subdecks=deck_subdecks,
+                ))
+
+        return user_decks
 
     def get_user(self, user_id: int) -> Optional[User]:
         user = self.user_repository.get_by_id(entity=UserEntity, document_id=user_id)
@@ -50,8 +75,9 @@ class UserService:
         )
         return True
 
+    # TODO -> Validar a remoção dos registros FK antes de deletar o User
     def delete_user(self, user_id: int) -> bool:
-        self.user_repository.remove(entity=UserEntity, document_id=user_id)
+        self.user_repository.delete_user(user_id=user_id)
         return True
 
     def validate_username(self, username: str) -> bool:

@@ -87,25 +87,15 @@ type Deck {
 # Query
 type Query {
     get_deck (deck_id: Int!): DeckResponse
-    get_decks: DeckListResponse
-    get_deck_subdecks (deck_id: Int!): SubDeckListResponse
-
     get_subdeck(subdeck_id: Int!): SubDeckResponse
-    get_subdecks: SubDeckListResponse
-    get_subdeck_cards (subdeck_id: Int!): CardListResponse
-
     get_card (card_id: Int!): CardResponse
-    get_cards: CardListResponse
-
     get_user(user_id: Int!): UserResponse
-    get_users: [User]
-
-    get_user_deck: DeckListResponse!
-    get_user_subdeck: SubDeckListResponse!
 
     validate_username(username: String!): Response!
     login(email: String!, password: String!): UserLoginResponse!
     validate_user_auth(jwt_token: String!): Response!
+
+    get_user_flashcards: DeckListResponse!
 }
 
 # Mutation
@@ -125,7 +115,4 @@ type Mutation {
     add_subdeck(deck_id: Int!, name: String!, description: String!): SubDeckResponse!
     edit_subdeck(subdeck_id: Int!, name: String!, description: String!): Response!
     delete_subdeck(subdeck_id: Int!): Response!
-
-    link_user_deck(user_id: Int!, deck_id: Int!): Response!
-    link_user_subdeck(user_id: Int!, subdeck_id: Int!): Response!
 }

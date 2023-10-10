@@ -9,7 +9,7 @@ class DeckService(BaseService):
         self.deck_repository = DeckRepository(session=session)
 
     def create_deck(self, deck: Deck):
-        deck_inserted = self.deck_repository.add(entity=DeckEntity(**deck.__dict__))
+        deck_inserted = self.deck_repository.add(entity=DeckEntity(**{key: value for key, value in deck.__dict__.items() if value}))
         deck.id = deck_inserted.id
         deck.creation_date = deck_inserted.creation_date
         return deck
@@ -20,8 +20,11 @@ class DeckService(BaseService):
 
     def update_deck(self, deck_id: int, deck: Deck) -> bool:
         self.deck_repository.update(
-            entity=DeckEntity, document_id=deck_id,
-            document={key: value.strip() for key, value in deck.__dict__.items() if value}
+            entity=DeckEntity,
+            document_id=deck_id,
+            document={
+                key: value.strip() for key, value in deck.__dict__.items() if value
+            },
         )
         return True
 
@@ -43,5 +46,5 @@ class DeckService(BaseService):
             description=deck.description,
             creation_date=deck.creation_date,
             user_id=deck.user_id,
-            subdecks=deck_subdecks
+            subdecks=deck_subdecks,
         )

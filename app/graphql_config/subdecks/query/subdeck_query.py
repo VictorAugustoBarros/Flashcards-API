@@ -23,7 +23,9 @@ def resolve_get_subdeck(*_, subdeck_id: int, token: dict) -> SubDeckResponse:
         user_info = token["user_info"]
 
         subdeck_service = SubdeckService(session=MySQLDB().session)
-        subdeck = subdeck_service.validate_subdeck_user(user_id=user_info["id"], subdeck_id=subdeck_id)
+        subdeck = subdeck_service.validate_subdeck_user(
+            user_id=user_info["id"], subdeck_id=subdeck_id
+        )
         if not subdeck:
             return SubDeckResponse(
                 response=Response(success=False, message="SubDeck não encontrado!")

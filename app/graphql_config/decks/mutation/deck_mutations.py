@@ -47,7 +47,9 @@ def resolve_add_deck(_, info, name: str, description: str, token: dict) -> DeckR
 
     except Exception as error:
         sentry_sdk.capture_exception(error)
-        return DeckResponse(response=Response(success=True, message="Falha ao remover Deck!"))
+        return DeckResponse(
+            response=Response(success=True, message="Falha ao criar Deck!")
+        )
 
 
 @deck_mutations.field("edit_deck")
@@ -61,7 +63,9 @@ def resolve_edit_deck(
         user_info = token["user_info"]
 
         deck_service = DeckService(session=MySQLDB().session)
-        deck_user = deck_service.validate_deck_user(user_id=user_info["id"], deck_id=deck_id)
+        deck_user = deck_service.validate_deck_user(
+            user_id=user_info["id"], deck_id=deck_id
+        )
         if not deck_user:
             return Response(success=False, message="Deck não encontrado!")
 
@@ -84,16 +88,16 @@ def resolve_edit_deck(
 
 @deck_mutations.field("delete_deck")
 @validate_token
-def resolve_delete_deck(
-    _, info, deck_id: int, token: dict
-) -> Response:
+def resolve_delete_deck(_, info, deck_id: int, token: dict) -> Response:
     try:
         if not token["valid"]:
             raise TokenError(token["error"])
         user_info = token["user_info"]
 
         deck_service = DeckService(session=MySQLDB().session)
-        deck_user = deck_service.validate_deck_user(user_id=user_info["id"], deck_id=deck_id)
+        deck_user = deck_service.validate_deck_user(
+            user_id=user_info["id"], deck_id=deck_id
+        )
         if not deck_user:
             return Response(success=False, message="Deck não encontrado!")
 

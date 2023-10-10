@@ -1,62 +1,63 @@
 """Card Mutations GraphQL."""
+import sentry_sdk
 from ariadne import MutationType
 
+from app.connections.mysql import MySQLDB
 from app.models.card import Card
+from services.card_service import CardService
 from app.graphql_config.models.card_response import CardResponse
 from app.graphql_config.models.response import Response
-from app.utils.errors import (
-    DatabaseInsertFailed,
-    DatabaseQueryFailed,
-    TokenError,
-    DatabaseUpdateFailed,
-)
+from app.utils.errors import DatabaseInsertFailed, TokenError
 from app.validations.middleware_validation import validate_token
+from services.subdeck_service import SubdeckService
 
 card_mutations = MutationType()
 
 
 @card_mutations.field("add_card")
+@validate_token
 def resolve_add_card(
-    _, info, subdeck_id: int, question: str, answer: str
+    _, info, subdeck_id: int, question: str, answer: str, token: dict
 ) -> CardResponse:
-    """Inserção de um novo Card
-
-    Args:
-        _:
-        info:
-        subdeck_id(int): ID do Subdeck
-        question(str): Pergunta do Card
-        answer(str): Resposta do Card
-
-    Returns:
-        Response: Resposta do sucesso da operação
-    """
     try:
-        sudeck_exists = subdeck_controller.validate_subdeck_exists(
-            subdeck_id=subdeck_id
+        if not token["valid"]:
+            raise TokenError(token["error"])
+        user_info = token["user_info"]
+
+        mysql_session = MySQLDB().session
+        subdeck_service = SubdeckService(session=mysql_session)
+        subdeck_user = subdeck_service.validate_subdeck_user(
+            user_id=user_info["id"], subdeck_id=subdeck_id
         )
-        if not sudeck_exists:
+        if not subdeck_user:
+            return CardResponse(
+                response=Response(success=False, message="SubDeck não encontrado!")
+            )
+
+        card_service = CardService(session=mysql_session)
+        card = card_service.create_card(
+            card=Card(question=question, answer=answer, subdeck_id=subdeck_id)
+        )
+        if not card:
             return CardResponse(
                 response=Response(
-                    success=False, message="Não existe um SubDeck com esse ID!"
+                    success=False, message="Falha ao criar Card, informações inválidas!"
                 )
             )
 
-        inserted_card = card_controller.insert_card(
-            card=Card(question=question, answer=answer), subdeck_id=subdeck_id
-        )
         return CardResponse(
-            card=inserted_card,
+            card=card,
             response=Response(success=True, message="Card criado com sucesso!"),
         )
 
-    except (DatabaseInsertFailed, DatabaseQueryFailed):
-        return CardResponse(
-            response=Response(success=False, error="Falha ao criar Card!")
-        )
+    except TokenError as error:
+        return CardResponse(response=Response(success=False, message=str(error)))
 
     except Exception as error:
-        raise error
+        sentry_sdk.capture_exception(error)
+        return CardResponse(
+            response=Response(success=True, message="Falha ao criar Card!")
+        )
 
 
 @card_mutations.field("edit_card")
@@ -64,76 +65,59 @@ def resolve_add_card(
 def resolve_edit_card(
     _, info, card_id: int, question: str, answer: str, token: dict
 ) -> Response:
-    """Inserção de um novo Card
-
-    Args:
-        _:
-        info:
-
-    Returns:
-        Response: Resposta do sucesso da operação
-    """
     try:
         if not token["valid"]:
             raise TokenError(token["error"])
-
         user_info = token["user_info"]
 
-        is_card_user = card_controller.is_card_user(
-            card_id=card_id, user_id=user_info["id"]
+        card_service = CardService(session=MySQLDB().session)
+        card_user = card_service.validate_card_user(
+            user_id=user_info["id"], card_id=card_id
         )
-        if not is_card_user:
-            return Response(success=False, message="Usuário não tem esse Card!")
+        if not card_user:
+            return Response(success=False, message="Card não encontrado!")
 
-        card_controller.update_card(
-            card_id=card_id,
-            question=question,
-            answer=answer,
+        card_service.update_card(
+            card_id=card_id, card=Card(question=question, answer=answer)
         )
         return Response(success=True, message="Card atualizado com sucesso!")
 
-    except (DatabaseInsertFailed, DatabaseQueryFailed, DatabaseUpdateFailed):
-        return Response(success=False, error="Falha ao atualizar Card!")
+    except DatabaseInsertFailed:
+        return Response(success=False, message="Falha ao atualizar Card!")
 
     except TokenError as error:
-        return Response(success=False, error=str(error))
+        return Response(success=False, message=str(error))
 
     except Exception as error:
-        raise error
+        sentry_sdk.capture_exception(error)
+        return Response(success=True, message="Falha ao atualizar Card!")
 
 
 @card_mutations.field("delete_card")
 @validate_token
 def resolve_delete_card(_, info, card_id: int, token: dict) -> Response:
-    """Inserção de um novo Card
-
-    Args:
-        _:
-        info:
-
-    Returns:
-        Response: Resposta do sucesso da operação
-    """
     try:
         if not token["valid"]:
             raise TokenError(token["error"])
-
         user_info = token["user_info"]
 
-        is_card_user = card_controller.is_card_user(
-            card_id=card_id, user_id=user_info["id"]
+        card_service = CardService(session=MySQLDB().session)
+        card_user = card_service.validate_card_user(
+            user_id=user_info["id"], card_id=card_id
         )
-        if not is_card_user:
-            return Response(success=False, message="Usuário não tem esse Card!")
+        if not card_user:
+            return Response(success=False, message="Card não encontrado!")
 
-        card_controller.delete_card(card_id=card_id)
-        return Response(success=True, message="Card deletado com sucesso!")
+        card_service.delete_card(card_id=card_id)
 
-    except (DatabaseInsertFailed, DatabaseQueryFailed):
-        return Response(success=False, error="Falha ao criar Card!")
+        return Response(success=True, message="Card removido com sucesso!")
+
+    except DatabaseInsertFailed:
+        return Response(success=False, message="Falha ao remover Card!")
 
     except TokenError as error:
-        return Response(success=False, error=str(error))
+        return Response(success=False, message=str(error))
 
     except Exception as error:
-        raise error
+        sentry_sdk.capture_exception(error)
+        return Response(success=True, message="Falha ao remover Card!")

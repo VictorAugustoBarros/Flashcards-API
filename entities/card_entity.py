@@ -13,13 +13,13 @@ class CardEntity(mysql_base):
     id = Column(Integer, primary_key=True)
     question = Column(String(255))
     answer = Column(String(255))
-    revised = Column(Boolean(False))
+    revised = Column(Boolean(), default=False)
     revision_date = Column(DateTime)
     creation_date = Column(DateTime(timezone=True), server_default=func.now())
     subdeck_id = Column(Integer, ForeignKey("subdecks.id"))
     review_difficulties_id = Column(Integer, ForeignKey("review_difficulties.id"))
 
-    subdeck = relationship("SubDeckEntity", back_populates="cards")
+    subdeck = relationship("SubDeckEntity", back_populates="cards", passive_deletes=True)
     review_difficulties = relationship(
         "ReviewDifficultiesEntity", back_populates="card"
     )

@@ -3,9 +3,13 @@ import sentry_sdk
 from ariadne import QueryType
 
 from app.connections.mysql import MySQLDB
+from app.graphql_config.models.deck_response import DeckResponse, DeckListResponse
 from app.graphql_config.models.response import Response
 from app.graphql_config.models.user_login_response import UserLoginResponse
 from app.graphql_config.models.user_response import UserResponse
+from app.utils.errors import TokenError
+from app.validations.middleware_validation import validate_token
+from services.deck_service import DeckService
 from services.user_service import UserService
 
 user_query = QueryType()
@@ -94,4 +98,24 @@ def resolve_login(*_, email: str, password: str) -> UserLoginResponse:
         sentry_sdk.capture_exception(error)
         return UserLoginResponse(
             response=Response(success=False, message="Falha ao validar Login!")
+        )
+
+
+@user_query.field("get_user_flashcards")
+@validate_token
+def resolve_get_user_flashcards(*_, token: dict) -> DeckListResponse:
+    try:
+        if not token["valid"]:
+            raise TokenError(token["error"])
+        user_info = token["user_info"]
+
+        user_service = UserService(session=MySQLDB().session)
+        user_decks = user_service.get_user_flashcards(user_id=user_info["id"])
+
+        return DeckListResponse(decks=user_decks, response=Response(success=True))
+
+    except Exception as error:
+        sentry_sdk.capture_exception(error)
+        return DeckListResponse(
+            response=Response(success=False, message="Falha na busca das informações do User!")
         )

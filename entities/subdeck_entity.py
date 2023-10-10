@@ -17,5 +17,5 @@ class SubDeckEntity(mysql_base):
     deck_id = Column(Integer, ForeignKey("decks.id"))
 
     deck = relationship("DeckEntity", back_populates="subdeck")
-    cards = relationship("CardEntity", back_populates="subdeck")
+    cards = relationship("CardEntity", back_populates="subdeck", cascade="all, delete")
     review = relationship("SubDeckReviewEntity", back_populates="subdeck")

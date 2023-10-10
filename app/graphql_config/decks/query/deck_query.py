@@ -32,7 +32,9 @@ def resolve_get_deck(*_, deck_id: int, token: dict) -> DeckResponse:
         user_info = token["user_info"]
 
         deck_service = DeckService(session=MySQLDB().session)
-        deck_user = deck_service.validate_deck_user(user_id=user_info["id"], deck_id=deck_id)
+        deck_user = deck_service.validate_deck_user(
+            user_id=user_info["id"], deck_id=deck_id
+        )
         if not deck_user:
             return DeckResponse(
                 response=Response(success=False, message="Deck não encontrado!")

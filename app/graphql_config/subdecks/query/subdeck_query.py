@@ -7,8 +7,8 @@ from app.graphql_config.models.subdeck_response import (
     SubDeckResponse,
 )
 from app.utils.errors import DatabaseQueryFailed, TokenError
-from app.validations.middleware_validation import validate_token
-from services.subdeck_service import SubdeckService
+from app.utils.middleware_validation import validate_token
+from app.services.subdeck_service import SubdeckService
 
 subdeck_query = QueryType()
 

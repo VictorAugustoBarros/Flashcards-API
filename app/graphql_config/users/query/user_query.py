@@ -3,14 +3,13 @@ import sentry_sdk
 from ariadne import QueryType
 
 from app.connections.mysql import MySQLDB
-from app.graphql_config.models.deck_response import DeckResponse, DeckListResponse
+from app.graphql_config.models.deck_response import DeckListResponse
 from app.graphql_config.models.response import Response
 from app.graphql_config.models.user_login_response import UserLoginResponse
 from app.graphql_config.models.user_response import UserResponse
 from app.utils.errors import TokenError
-from app.validations.middleware_validation import validate_token
-from services.deck_service import DeckService
-from services.user_service import UserService
+from app.utils.middleware_validation import validate_token
+from app.services import UserService
 
 user_query = QueryType()
 
@@ -117,5 +116,7 @@ def resolve_get_user_flashcards(*_, token: dict) -> DeckListResponse:
     except Exception as error:
         sentry_sdk.capture_exception(error)
         return DeckListResponse(
-            response=Response(success=False, message="Falha na busca das informações do User!")
+            response=Response(
+                success=False, message="Falha na busca das informações do User!"
+            )
         )

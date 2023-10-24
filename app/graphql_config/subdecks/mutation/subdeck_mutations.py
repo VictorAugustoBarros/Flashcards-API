@@ -4,11 +4,11 @@ from ariadne import MutationType
 
 from app.connections.mysql import MySQLDB
 from app.models.subdeck import SubDeck
-from services.subdeck_service import SubdeckService
+from app.services.subdeck_service import SubdeckService
 from app.graphql_config.models.subdeck_response import SubDeckResponse
 from app.graphql_config.models.response import Response
 from app.utils.errors import DatabaseInsertFailed, TokenError
-from app.validations.middleware_validation import validate_token
+from app.utils.middleware_validation import validate_token
 
 subdeck_mutations = MutationType()
 

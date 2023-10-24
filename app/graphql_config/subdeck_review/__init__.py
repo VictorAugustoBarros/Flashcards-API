@@ -1,0 +1,2 @@
+from .query.subdeck_review_query import subdeck_review_query
+from .mutation.subdeck_review_mutations import subdeck_review_mutation

@@ -4,11 +4,11 @@ from ariadne import MutationType
 
 from app.connections.mysql import MySQLDB
 from app.models.deck import Deck
-from services.deck_service import DeckService
+from app.services.deck_service import DeckService
 from app.graphql_config.models.deck_response import DeckResponse
 from app.graphql_config.models.response import Response
 from app.utils.errors import DatabaseInsertFailed, TokenError
-from app.validations.middleware_validation import validate_token
+from app.utils.middleware_validation import validate_token
 
 deck_mutations = MutationType()
 

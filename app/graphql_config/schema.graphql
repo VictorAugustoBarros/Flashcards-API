@@ -1,3 +1,44 @@
+# MODELS
+type Card {
+    id: Int
+    question: String!
+    answer: String!
+    creation_date: String
+    subdeck_id: Int
+}
+
+type User {
+    id: Int
+    email: String!
+    username: String!
+    password: String!
+    creation_date: String
+}
+
+type SubDeck {
+    id: Int
+    name: String!
+    description: String!
+    cards: [Card]
+    creation_date: String
+}
+
+type Deck {
+    id: Int
+    name: String!
+    description: String
+    subdecks: [SubDeck]
+    creation_date: String
+}
+
+type SubDeckReview {
+    id: Int
+    deck_id: Int!
+    subdeck_id: Int!
+    creation_date: String
+}
+
+# RESPONSES
 type Response {
     success: Boolean!
     message: String
@@ -29,62 +70,17 @@ type SubDeckResponse {
     response: Response
 }
 
-type SubDeckListResponse {
-    subdecks: [SubDeck]
-    response: Response
-}
-
 type CardResponse {
     card: Card
     response: Response
 }
 
-type CardListResponse {
-    cards: [Card]
+type SubDeckReviewResponse {
+    subdeck_review: SubDeckReview
     response: Response
 }
 
-type Card {
-    id: Int
-    question: String!
-    answer: String!
-    creation_date: String
-    subdeck_id: Int
-}
-
-type User {
-    id: Int
-    email: String!
-    username: String!
-    password: String!
-    creation_date: String
-}
-
-type SubDeck {
-    id: Int
-    name: String!
-    description: String!
-    cards: [Card]
-    creation_date: String
-}
-
-type UserDeck {
-    id: Int
-    user_id: Int
-    deck_id: Int
-    creation_date: String
-}
-
-
-type Deck {
-    id: Int
-    name: String!
-    description: String
-    subdecks: [SubDeck]
-    creation_date: String
-}
-
-# Query
+# QUERY
 type Query {
     get_deck (deck_id: Int!): DeckResponse
     get_subdeck(subdeck_id: Int!): SubDeckResponse
@@ -96,23 +92,29 @@ type Query {
     validate_user_auth(jwt_token: String!): Response!
 
     get_user_flashcards: DeckListResponse!
+
+    get_subdeck_review(subdeck_review_id: Int!): SubDeckReviewResponse!
 }
 
-# Mutation
+# MUTATIONS
 type Mutation {
-    add_card(subdeck_id: Int!, question: String!, answer: String!): CardResponse!
-    edit_card(card_id: Int!, question: String!, answer: String!): Response!
-    delete_card(card_id: Int!): Response!
-
-    add_deck(name: String!, description: String!) : DeckResponse!
-    edit_deck(deck_id: Int!, name: String!, description: String!): Response!
-    delete_deck(deck_id: Int!): Response!
-
     add_user(email: String!, username: String!, password: String!): Response!
     edit_user(email: String!, username: String!, password: String!): Response!
     delete_user: Response!
 
+    add_deck(name: String!, description: String!) : DeckResponse!
+    edit_deck(deck_id: Int!, name: String!, description: String!): Response!
+    delete_deck(deck_id: Int!): Response!
+    add_card_review(card_id: Int!, review_difficulties_id: Int): Response!
+
     add_subdeck(deck_id: Int!, name: String!, description: String!): SubDeckResponse!
     edit_subdeck(subdeck_id: Int!, name: String!, description: String!): Response!
     delete_subdeck(subdeck_id: Int!): Response!
+
+    add_card(subdeck_id: Int!, question: String!, answer: String!): CardResponse!
+    edit_card(card_id: Int!, question: String!, answer: String!): Response!
+    delete_card(card_id: Int!): Response!
+
+    add_subdeck_review(deck_id: Int!, subdeck_id: Int!): SubDeckReviewResponse!
+    delete_subdeck_review(subdeck_review_id: Int!): Response!
 }

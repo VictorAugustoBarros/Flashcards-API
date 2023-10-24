@@ -3,12 +3,11 @@ import sentry_sdk
 from ariadne import QueryType
 
 from app.connections.mysql import MySQLDB
-from app.graphql_config.models.deck_response import DeckListResponse, DeckResponse
+from app.graphql_config.models.deck_response import DeckResponse
 from app.graphql_config.models.response import Response
-from app.graphql_config.models.subdeck_response import SubDeckListResponse
 from app.utils.errors import DatabaseQueryFailed, TokenError
-from app.validations.middleware_validation import validate_token
-from services.deck_service import DeckService
+from app.utils.middleware_validation import validate_token
+from app.services.deck_service import DeckService
 
 deck_query = QueryType()
 
@@ -52,4 +51,7 @@ def resolve_get_deck(*_, deck_id: int, token: dict) -> DeckResponse:
         return DeckResponse(response=Response(success=False, message=str(error)))
 
     except Exception as error:
-        raise error
+        sentry_sdk.capture_exception(error)
+        return DeckResponse(
+            response=Response(success=False, message="Falha ao remover Review!")
+        )

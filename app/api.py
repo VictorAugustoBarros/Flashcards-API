@@ -8,17 +8,17 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.graphql_config.graphql_error import graphql_format_error
 from app.graphql_config.schema_importer import graphql_schema
 from app.routers.status import status_router
-from app.sentry import Sentry
+from app.utils.sentry import Sentry
 
+
+# Backend
+# TODO -> Criar as Querys/Mutations das tabelas de REVIEWS
+# TODO -> Arrumar os testes unitários
+# TODO -> Arrumar as docstring (mypy)
 
 # Frontend
 # TODO -> Pensar no design do updater/delete dos Decks/Subdecks (Div da direita)
 # TODO -> Popular os graficos da dashboard com valores do banco
-
-# Backend
-# TODO -> Finalizar os Updates/Deletes (Mutations)
-# TODO -> Arrumar as docstring (mypy)
-# TODO -> Aplicar o Nuxt no projeto (estudar)
 
 # Outros
 # TODO -> Responsividade

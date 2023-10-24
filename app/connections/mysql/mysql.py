@@ -10,7 +10,7 @@ from app.utils.credencials import (
     mysql_user,
 )
 
-from entities.base_entity import mysql_base
+from app.entities.base_entity import mysql_base
 
 
 class MySQLDB:
@@ -30,6 +30,11 @@ class MySQLDB:
         engine = create_engine(
             f"mysql+pymysql://{mysql_user}:{mysql_password}@{mysql_host}:{mysql_port}/{mysql_database}"
         )
-        # mysql_base.metadata.drop_all(engine)
+        mysql_base.metadata.drop_all(engine)
         mysql_base.metadata.create_all(engine)
         self.session = sessionmaker(bind=engine)
+
+
+if __name__ == "__main__":
+    MySQLDB().init_db()
+    print("OK")

@@ -16,7 +16,5 @@ omit =
     app/models/responses/subdeck_response.py
     app/models/responses/user_response.py
     app/models/schema_importer.py
-    app/models/user_deck/user_deck.py
-    app/models/user_subdeck/user_subdeck.py
     app/services/sentry.py
     app/utils/credencials.py

@@ -1,7 +1,9 @@
 from unittest import TestCase
 from python_graphql_client import GraphqlClient
-from app.controllers.card_controller import CardController
-from app.connections.dependencies import Dependencies
+from app.services.card_service import CardService
+from app.connections.mysql import MySQLDB
+from fastapi.testclient import TestClient
+from app.api import app
 
 
 class TestCardMutation(TestCase):
@@ -9,12 +11,12 @@ class TestCardMutation(TestCase):
 
     @classmethod
     def setUp(self) -> None:
-        db_conn = Dependencies.create_database()
-        self.card_controller = CardController(db_conn=db_conn)
+        self.card_service = CardService(session=MySQLDB().session)
 
     @classmethod
     def setUpClass(self) -> None:
-        self.client = GraphqlClient(endpoint="http://localhost:8000/graphql/")
+        self.api_client = TestClient(app)
+        self.graphql_client = GraphqlClient(endpoint="http://localhost:8000/graphql/")
 
     def test_add_card(self):
         query = """
@@ -34,6 +36,6 @@ class TestCardMutation(TestCase):
         success = result["data"]["add_card"]["response"]["success"]
         if success:
             card_id = result["data"]["add_card"]["card"]["id"]
-            self.card_controller.delete_card(card_id)
+            self.card_service.delete_card(card_id=card_id)
 
         self.assertTrue(success)

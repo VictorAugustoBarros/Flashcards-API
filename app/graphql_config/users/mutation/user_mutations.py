@@ -6,8 +6,8 @@ from app.connections.mysql import MySQLDB
 from app.graphql_config.models.response import Response
 from app.models.user import User
 from app.utils.errors import TokenError, UsernameAlreadyTaken, EmailAlreadyTaken
-from services.user_service import UserService
-from app.validations.middleware_validation import validate_token
+from app.services import UserService
+from app.utils.middleware_validation import validate_token
 
 user_mutations = MutationType()
 

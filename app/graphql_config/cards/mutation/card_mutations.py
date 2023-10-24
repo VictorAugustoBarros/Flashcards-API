@@ -4,12 +4,12 @@ from ariadne import MutationType
 
 from app.connections.mysql import MySQLDB
 from app.models.card import Card
-from services.card_service import CardService
+from app.services import CardService
 from app.graphql_config.models.card_response import CardResponse
 from app.graphql_config.models.response import Response
 from app.utils.errors import DatabaseInsertFailed, TokenError
-from app.validations.middleware_validation import validate_token
-from services.subdeck_service import SubdeckService
+from app.utils.middleware_validation import validate_token
+from app.services.subdeck_service import SubdeckService
 
 card_mutations = MutationType()
 
@@ -121,3 +121,39 @@ def resolve_delete_card(_, info, card_id: int, token: dict) -> Response:
     except Exception as error:
         sentry_sdk.capture_exception(error)
         return Response(success=True, message="Falha ao remover Card!")
+
+
+@card_mutations.field("add_card_review")
+@validate_token
+def resolve_add_card_review(
+    _, info, card_id: int, review_difficulties_id: int, token: dict
+) -> Response:
+    try:
+        if not token["valid"]:
+            raise TokenError(token["error"])
+        user_info = token["user_info"]
+
+        # TODO -> Validar se o "id da dificuldade" existe
+
+        card_service = CardService(session=MySQLDB().session)
+        card_user = card_service.validate_card_user(
+            user_id=user_info["id"], card_id=card_id
+        )
+        if not card_user:
+            return Response(success=False, message="Card não encontrado!")
+
+        card_service.create_card_review(
+            card_id=card_id, review_difficulties_id=review_difficulties_id
+        )
+
+        return Response(success=True, message="CardReview criado com sucesso!")
+
+    except DatabaseInsertFailed:
+        return Response(success=False, message="Falha ao criar CardReview!")
+
+    except TokenError as error:
+        return Response(success=False, message=str(error))
+
+    except Exception as error:
+        sentry_sdk.capture_exception(error)
+        return Response(success=True, message="Falha ao criar CardReview!")

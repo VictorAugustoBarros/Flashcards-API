@@ -3,11 +3,11 @@ import sentry_sdk
 from ariadne import QueryType
 
 from app.connections.mysql import MySQLDB
-from app.graphql_config.models.card_response import CardListResponse, CardResponse
+from app.graphql_config.models.card_response import CardResponse
 from app.graphql_config.models.response import Response
-from app.utils.errors import DatabaseQueryFailed, TokenError
-from app.validations.middleware_validation import validate_token
-from services.card_service import CardService
+from app.utils.errors import TokenError
+from app.utils.middleware_validation import validate_token
+from app.services import CardService
 
 card_query = QueryType()
 
@@ -35,6 +35,7 @@ def resolve_get_card(*_, card_id: int, token: dict) -> CardResponse:
         return CardResponse(card=card, response=Response(success=True))
 
     except Exception as error:
+        raise error
         sentry_sdk.capture_exception(error)
         return CardResponse(
             response=Response(success=False, message="Falha ao buscar Card")

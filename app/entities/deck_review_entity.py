@@ -16,5 +16,4 @@ class DeckReviewEntity(mysql_base):
     revision_date = Column(DateTime(timezone=True))
 
     deck = relationship("DeckEntity", back_populates="deck_review")
-
     subdeck_review = relationship("SubDeckReviewEntity", back_populates="deck_review")

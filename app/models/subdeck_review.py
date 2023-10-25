@@ -4,7 +4,6 @@ from dataclasses import dataclass
 
 @dataclass
 class SubDeckReview:
-    deck_id: int
-    subdeck_id: int
     id: int = None
-    creation_date: datetime = None
+    deck_review_id: int = None
+    subdeck_id: int = None

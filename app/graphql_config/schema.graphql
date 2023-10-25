@@ -33,9 +33,21 @@ type Deck {
 
 type SubDeckReview {
     id: Int
-    deck_id: Int!
+    deck_review_id: Int!
     subdeck_id: Int!
-    creation_date: String
+}
+
+type DeckReview {
+    id: Int
+    deck_id: Int!
+}
+
+type CardReview {
+    id: Int,
+    card_id: Int!,
+    subdeck_review_id: Int!,
+    review_difficulties_id: Int,
+    revision_date: String
 }
 
 # RESPONSES
@@ -80,6 +92,16 @@ type SubDeckReviewResponse {
     response: Response
 }
 
+type DeckReviewResponse {
+    deck_review: DeckReview
+    response: Response
+}
+
+type CardReviewResponse {
+    card_review: CardReview
+    response: Response
+}
+
 # QUERY
 type Query {
     get_deck (deck_id: Int!): DeckResponse
@@ -94,6 +116,10 @@ type Query {
     get_user_flashcards: DeckListResponse!
 
     get_subdeck_review(subdeck_review_id: Int!): SubDeckReviewResponse!
+
+    get_deck_review(deck_review_id: Int!): DeckReviewResponse!
+
+    get_card_review(card_review_id: Int!): CardReviewResponse!
 }
 
 # MUTATIONS
@@ -105,7 +131,6 @@ type Mutation {
     add_deck(name: String!, description: String!) : DeckResponse!
     edit_deck(deck_id: Int!, name: String!, description: String!): Response!
     delete_deck(deck_id: Int!): Response!
-    add_card_review(card_id: Int!, review_difficulties_id: Int): Response!
 
     add_subdeck(deck_id: Int!, name: String!, description: String!): SubDeckResponse!
     edit_subdeck(subdeck_id: Int!, name: String!, description: String!): Response!
@@ -115,6 +140,12 @@ type Mutation {
     edit_card(card_id: Int!, question: String!, answer: String!): Response!
     delete_card(card_id: Int!): Response!
 
-    add_subdeck_review(deck_id: Int!, subdeck_id: Int!): SubDeckReviewResponse!
+    add_deck_review(deck_id: Int!): DeckReviewResponse!
+    delete_deck_review(deck_review_id: Int!): Response!
+
+    add_subdeck_review(deck_review_id: Int!, subdeck_id: Int!): SubDeckReviewResponse!
     delete_subdeck_review(subdeck_review_id: Int!): Response!
+
+    add_card_review(card_id: Int!, subdeck_review_id: Int!, review_difficulties_id: Int!): CardReviewResponse!
+    delete_card_review(card_review_id: Int!): Response!
 }

@@ -3,9 +3,13 @@ class BaseRepository:
         self.session = session
 
     def add(self, entity):
-        self.session.add(entity)
-        self.session.commit()
-        return entity
+        try:
+            self.session.add(entity)
+            self.session.commit()
+            return entity
+
+        except Exception as error:
+            print(error)
 
     def remove(self, entity, document_id: int):
         document = self.session.query(entity).filter(entity.id == document_id).first()

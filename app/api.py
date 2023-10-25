@@ -12,7 +12,6 @@ from app.utils.sentry import Sentry
 
 
 # Backend
-# TODO -> Criar as Querys/Mutations das tabelas de REVIEWS
 # TODO -> Arrumar os testes unitários
 # TODO -> Arrumar as docstring (mypy)
 

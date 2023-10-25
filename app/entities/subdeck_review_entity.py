@@ -1,5 +1,5 @@
 """MySQL SubDeckReviewEntity model."""
-from sqlalchemy import Column, DateTime, ForeignKey, Integer, func, Boolean
+from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 
 from app.entities.base_entity import mysql_base

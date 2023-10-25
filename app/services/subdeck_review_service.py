@@ -8,8 +8,8 @@ class SubdeckReviewService(BaseService):
     def __init__(self, session):
         self.subdeck_review_repository = SubDeckReviewRepository(session=session)
 
-    def create_review(self, subdeck_review: SubDeckReview) -> SubDeckReview:
-        subdeck_review_inserted = self.subdeck_review_repository.add(
+    def create_subdeck_review(self, subdeck_review: SubDeckReview) -> SubDeckReview:
+        subdeck_review_inserted: SubDeckReviewEntity = self.subdeck_review_repository.add(
             entity=SubDeckReviewEntity(
                 **{
                     key: value
@@ -19,7 +19,8 @@ class SubdeckReviewService(BaseService):
             )
         )
         subdeck_review.id = subdeck_review_inserted.id
-        subdeck_review.creation_date = subdeck_review_inserted.creation_date
+        subdeck_review.deck_review_id = subdeck_review_inserted.deck_review_id
+        subdeck_review.subdeck_id = subdeck_review_inserted.subdeck_id
         return subdeck_review
 
     def delete_subdeck_review(self, subdeck_review_id: int):
@@ -37,9 +38,8 @@ class SubdeckReviewService(BaseService):
 
         return SubDeckReview(
             id=subdeck_review.id,
-            deck_id=subdeck_review.deck_id,
-            subdeck_id=subdeck_review.subdeck_id,
-            creation_date=subdeck_review.creation_date,
+            deck_review_id=subdeck_review.deck_review_id,
+            subdeck_id=subdeck_review.subdeck_id
         )
 
     def validate_subdeck_review_user(

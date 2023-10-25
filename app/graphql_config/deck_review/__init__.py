@@ -1,0 +1,2 @@
+from .query.deck_review_query import deck_review_query
+from .mutation.deck_review_mutations import deck_review_mutation

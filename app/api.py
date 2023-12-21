@@ -12,12 +12,13 @@ from app.utils.sentry import Sentry
 
 
 # Backend
-# TODO -> Arrumar os testes unitários
+# TODO -> Iniciar os testes unitários para validar a funcionalidade do processo
 # TODO -> Arrumar as docstring (mypy)
 
 # Frontend
 # TODO -> Pensar no design do updater/delete dos Decks/Subdecks (Div da direita)
 # TODO -> Popular os graficos da dashboard com valores do banco
+# TODO -> Aplicar o Design Pattern "Mediator"
 
 # Outros
 # TODO -> Responsividade

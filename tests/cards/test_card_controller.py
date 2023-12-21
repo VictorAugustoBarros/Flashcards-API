@@ -1,54 +1,54 @@
 from unittest import TestCase
 from unittest.mock import Mock
-from app.controllers.card_controller import CardController
-from app.controllers.subdeck_controller import SubDeckController
-from app.controllers.deck_controller import DeckController
-from app.graphql_config.cards import Card
+from app.services.card_service import CardService
+from app.services.subdeck_service import SubdeckService
+from app.services.deck_service import DeckService
+from app.models.card import Card
 from app.models.deck import Deck
 from app.models.subdeck import SubDeck
-from app.connections.dependencies import Dependencies
+from app.connections.mysql import MySQLDB
 from app.utils.errors import DatabaseInsertFailed, DatabaseQueryFailed
 
 
 class TestCardController(TestCase):
     """Classe para testes unitário da classe CardController"""
 
-    db_conn = None
-    subdeck_controller = None
-    card_controller = None
-    deck_controller = None
+    mysql_session = None
+    deck_service = None
+    subdeck_service = None
+    card_service = None
 
     @classmethod
     def setUp(self) -> None:
         """Método executado a cada teste"""
-        self.db_conn = Dependencies.create_database()
-        self.deck_controller = DeckController(db_conn=self.db_conn)
-        self.subdeck_controller = SubDeckController(db_conn=self.db_conn)
-        self.card_controller = CardController(db_conn=self.db_conn)
+        mysql_session = MySQLDB().session
+        self.deck_service = DeckService(session=mysql_session)
+        self.subdeck_service = SubdeckService(session=mysql_session)
+        self.card_service = CardService(session=mysql_session)
 
     def test_insert_card(self):
         """Teste de inserção de um card no banco de dados"""
         # Criação dos dados
         deck = Deck(name="Deck Teste", description="Deck para Teste")
-        deck_inserted = self.deck_controller.insert_deck(deck=deck)
+        deck_inserted = self.deck_service.create_deck(deck=deck)
 
-        subdeck = SubDeck(name="SubDeck Teste", description="Subdeck para testes")
-        subdeck_inserted = self.subdeck_controller.insert_subdeck(
-            subdeck=subdeck, deck_id=deck_inserted.id
+        subdeck = SubDeck(name="SubDeck Teste", description="Subdeck para testes", deck_id=deck_inserted.id)
+        subdeck_inserted = self.subdeck_service.create_subdeck(
+            subdeck=subdeck
         )
 
-        card = Card(question="Teste", answer="Teste")
-        card_inserted = self.card_controller.insert_card(
-            card=card, subdeck_id=subdeck_inserted.id
+        card = Card(question="Teste", subdeck_id=subdeck_inserted.id, answer="Teste")
+        card_inserted = self.card_service.create_card(
+            card=card
         )
 
         # Testes
         self.assertIsNotNone(card_inserted.id)
 
         # Remoção dos dados
-        self.deck_controller.delete_deck(deck_id=deck.id)
-        self.subdeck_controller.delete_subdeck(subdeck_id=subdeck.id)
-        self.card_controller.delete_card(card_id=card.id)
+        self.deck_service.delete_deck(deck_id=deck.id)
+        self.subdeck_service.delete_subdeck(subdeck_id=subdeck.id)
+        self.card_service.delete_card(card_id=card.id)
 
     def test_insert_card_subdeck_not_exists(self):
         """Teste de inserção de um card informando um subdeck_id inexistente"""
